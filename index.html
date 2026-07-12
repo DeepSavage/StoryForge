@@ -42,11 +42,13 @@
       --conn-choice: #34D399;
       --conn-loop: #FBBF24;
       --conn-end: #F87171;
+      --conn-parent: #A78BFA;
       
       --glow-continue: rgba(96, 165, 250, 0.6);
       --glow-choice: rgba(52, 211, 153, 0.6);
       --glow-loop: rgba(251, 191, 36, 0.6);
       --glow-end: rgba(248, 113, 113, 0.6);
+      --glow-parent: rgba(167, 139, 250, 0.6);
       
       --bg-primary-rgb: 10, 15, 28;
       --accent-primary-rgb: 56, 189, 248;
@@ -55,7 +57,7 @@
     }
 
     /* ============================================================
-       THEME: LIGHT
+       THEMES (condensed for brevity - same as before)
     ============================================================ */
     [data-theme="light"] {
       --bg-primary: #F1F5F9;
@@ -79,9 +81,6 @@
       --accent-gradient: linear-gradient(135deg, #3B82F6, #2563EB);
     }
 
-    /* ============================================================
-       THEME: OCEAN
-    ============================================================ */
     [data-theme="ocean"] {
       --bg-primary: #0C1929;
       --bg-secondary: #0F2440;
@@ -103,9 +102,6 @@
       --accent-danger-rgb: 248, 113, 113;
     }
 
-    /* ============================================================
-       THEME: FOREST
-    ============================================================ */
     [data-theme="forest"] {
       --bg-primary: #0A1A0F;
       --bg-secondary: #0F2418;
@@ -127,9 +123,6 @@
       --accent-danger-rgb: 248, 113, 113;
     }
 
-    /* ============================================================
-       THEME: SUNSET
-    ============================================================ */
     [data-theme="sunset"] {
       --bg-primary: #1A0C0C;
       --bg-secondary: #2D1515;
@@ -151,9 +144,6 @@
       --accent-danger-rgb: 239, 68, 68;
     }
 
-    /* ============================================================
-       THEME: PURPLE
-    ============================================================ */
     [data-theme="purple"] {
       --bg-primary: #0D0A1A;
       --bg-secondary: #1A1035;
@@ -176,7 +166,7 @@
     }
 
     /* ============================================================
-       GLOBAL RESET
+       GLOBAL RESET & BASE STYLES (same as before)
     ============================================================ */
     * {
       margin: 0;
@@ -196,7 +186,7 @@
     }
 
     /* ============================================================
-       CURSOR EFFECT
+       CURSOR EFFECT (same as before)
     ============================================================ */
     #cursorTrail {
       position: fixed;
@@ -247,7 +237,7 @@
     }
 
     /* ============================================================
-       TOP NAVBAR
+       NAVBAR (same as before - condensed)
     ============================================================ */
     .navbar {
       background: rgba(var(--bg-primary-rgb), 0.92);
@@ -308,7 +298,6 @@
       gap: 12px;
     }
 
-    /* Connection Legend */
     .legend {
       display: flex;
       align-items: center;
@@ -337,6 +326,7 @@
     .legend-dot.choice { background: var(--conn-choice); }
     .legend-dot.loop { background: var(--conn-loop); }
     .legend-dot.end { background: var(--conn-end); }
+    .legend-dot.parent { background: var(--conn-parent); }
 
     .theme-selector {
       position: relative;
@@ -542,7 +532,7 @@
     }
 
     /* ============================================================
-       LEFT PANEL
+       LEFT PANEL (same as before - condensed)
     ============================================================ */
     .editor-panel {
       width: 35%;
@@ -892,7 +882,6 @@
       cursor: grabbing;
     }
 
-    /* Nodes container */
     .nodes-layer {
       position: absolute;
       top: 0;
@@ -937,31 +926,37 @@
     /* ===== NODE GLOW EFFECTS ===== */
     .node-item.glow-continue {
       border-color: var(--conn-continue);
-      box-shadow: 0 0 30px var(--glow-continue), 0 0 60px var(--glow-continue), inset 0 0 30px var(--glow-continue);
+      box-shadow: 0 0 30px var(--glow-continue), 0 0 60px var(--glow-continue);
       z-index: 5;
     }
 
     .node-item.glow-choice {
       border-color: var(--conn-choice);
-      box-shadow: 0 0 30px var(--glow-choice), 0 0 60px var(--glow-choice), inset 0 0 30px var(--glow-choice);
+      box-shadow: 0 0 30px var(--glow-choice), 0 0 60px var(--glow-choice);
       z-index: 5;
     }
 
     .node-item.glow-loop {
       border-color: var(--conn-loop);
-      box-shadow: 0 0 30px var(--glow-loop), 0 0 60px var(--glow-loop), inset 0 0 30px var(--glow-loop);
+      box-shadow: 0 0 30px var(--glow-loop), 0 0 60px var(--glow-loop);
       z-index: 5;
     }
 
     .node-item.glow-end {
       border-color: var(--conn-end);
-      box-shadow: 0 0 30px var(--glow-end), 0 0 60px var(--glow-end), inset 0 0 30px var(--glow-end);
+      box-shadow: 0 0 30px var(--glow-end), 0 0 60px var(--glow-end);
+      z-index: 5;
+    }
+
+    .node-item.glow-parent {
+      border-color: var(--conn-parent);
+      box-shadow: 0 0 30px var(--glow-parent), 0 0 60px var(--glow-parent);
       z-index: 5;
     }
 
     .node-item.glow-selected {
       border-color: var(--accent-primary);
-      box-shadow: 0 0 40px var(--accent-primary), 0 0 80px var(--accent-primary), inset 0 0 40px rgba(56, 189, 248, 0.3);
+      box-shadow: 0 0 40px var(--accent-primary), 0 0 80px var(--accent-primary);
       transform: scale(1.08);
       z-index: 15;
     }
@@ -975,12 +970,11 @@
     /* ===== PARTICLE EFFECTS ===== */
     .node-particles {
       position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
       pointer-events: none;
-      overflow: visible;
       z-index: -1;
     }
 
@@ -988,49 +982,40 @@
       position: absolute;
       border-radius: 50%;
       pointer-events: none;
-      animation: particleFloat 2s ease-in-out infinite;
       opacity: 0;
     }
 
     .particle.continue-particle {
       background: var(--conn-continue);
-      box-shadow: 0 0 10px var(--conn-continue);
+      box-shadow: 0 0 6px var(--conn-continue);
     }
 
     .particle.choice-particle {
       background: var(--conn-choice);
-      box-shadow: 0 0 10px var(--conn-choice);
+      box-shadow: 0 0 6px var(--conn-choice);
     }
 
     .particle.loop-particle {
       background: var(--conn-loop);
-      box-shadow: 0 0 10px var(--conn-loop);
+      box-shadow: 0 0 6px var(--conn-loop);
     }
 
     .particle.end-particle {
       background: var(--conn-end);
-      box-shadow: 0 0 10px var(--conn-end);
+      box-shadow: 0 0 6px var(--conn-end);
     }
 
-    @keyframes particleFloat {
-      0% {
-        transform: translate(0, 0) scale(0.5);
-        opacity: 0;
-      }
-      20% {
-        opacity: 1;
-      }
-      80% {
-        opacity: 1;
-      }
-      100% {
-        transform: translate(var(--tx), var(--ty)) scale(1.2);
-        opacity: 0;
-      }
+    .particle.parent-particle {
+      background: var(--conn-parent);
+      box-shadow: 0 0 6px var(--conn-parent);
     }
 
     .particle.emitting {
       animation: particleEmit 1.5s ease-in-out infinite;
+    }
+
+    .particle.orbiting {
+      animation: particleOrbit 2s linear infinite;
     }
 
     @keyframes particleEmit {
@@ -1038,15 +1023,29 @@
         transform: translate(0, 0) scale(0.3);
         opacity: 0;
       }
-      10% {
-        opacity: 1;
-      }
-      90% {
+      15% {
         opacity: 0.8;
+      }
+      85% {
+        opacity: 0.6;
       }
       100% {
         transform: translate(var(--tx), var(--ty)) scale(1);
         opacity: 0;
+      }
+    }
+
+    @keyframes particleOrbit {
+      0% {
+        transform: rotate(0deg) translateX(var(--dist)) rotate(0deg);
+        opacity: 0.7;
+      }
+      50% {
+        opacity: 1;
+      }
+      100% {
+        transform: rotate(360deg) translateX(var(--dist)) rotate(-360deg);
+        opacity: 0.7;
       }
     }
 
@@ -1070,15 +1069,16 @@
 
     .flow-line .line-path {
       fill: none;
-      stroke-width: 2;
+      stroke-width: 2.5;
       stroke-linecap: round;
-      opacity: 0.6;
+      opacity: 0.7;
     }
 
     .flow-line .line-path.continue-path { stroke: var(--conn-continue); }
     .flow-line .line-path.choice-path { stroke: var(--conn-choice); }
     .flow-line .line-path.loop-path { stroke: var(--conn-loop); }
     .flow-line .line-path.end-path { stroke: var(--conn-end); }
+    .flow-line .line-path.parent-path { stroke: var(--conn-parent); stroke-dasharray: 6 4; }
 
     .flow-line .line-path.animate {
       stroke-dasharray: 8 6;
@@ -1087,6 +1087,20 @@
 
     @keyframes dashFlow {
       to { stroke-dashoffset: -14; }
+    }
+
+    /* ===== RECEIVER DOT ===== */
+    .receiver-dot {
+      position: absolute;
+      border-radius: 50%;
+      z-index: 3;
+      animation: receiverPulse 1.5s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    @keyframes receiverPulse {
+      0%, 100% { transform: scale(0.8); opacity: 0.6; }
+      50% { transform: scale(1.3); opacity: 1; }
     }
 
     .node-item .node-header {
@@ -1264,9 +1278,6 @@
     .node-map-empty p { font-size: 0.9rem; }
     .node-map-empty small { font-size: 0.7rem; }
 
-    /* ============================================================
-       STATUS BAR
-    ============================================================ */
     .status-bar {
       position: absolute;
       bottom: 80px;
@@ -1295,9 +1306,6 @@
       font-weight: 600;
     }
 
-    /* ============================================================
-       TOAST NOTIFICATIONS
-    ============================================================ */
     .toast-container {
       position: fixed;
       bottom: 24px;
@@ -1351,9 +1359,6 @@
       to { opacity: 0; transform: translateY(20px); }
     }
 
-    /* ============================================================
-       RESPONSIVE
-    ============================================================ */
     @media (max-width: 1024px) {
       .editor-panel {
         width: 40%;
@@ -1423,12 +1428,12 @@
     </div>
 
     <div class="navbar-actions">
-      <!-- Connection Legend -->
       <div class="legend">
         <span class="legend-item"><span class="legend-dot continue"></span> Continue</span>
         <span class="legend-item"><span class="legend-dot choice"></span> Choice</span>
         <span class="legend-item"><span class="legend-dot loop"></span> Loop</span>
         <span class="legend-item"><span class="legend-dot end"></span> End</span>
+        <span class="legend-item"><span class="legend-dot parent"></span> Parent</span>
       </div>
 
       <div class="theme-selector" id="themeSelector" onclick="toggleThemeDropdown()">
@@ -1512,7 +1517,7 @@
         <div>
           <strong>Visual Navigation:</strong> Click any node to highlight its connections
           <span style="display: block; margin-top: 2px; font-size: 0.65rem; color: var(--text-muted);">
-            <i class="fas fa-mouse-pointer"></i> Connected nodes glow with colored effects • Click again to clear focus
+            <i class="fas fa-mouse-pointer"></i> Shows both parent (incoming) and child (outgoing) connections
           </span>
         </div>
       </div>
@@ -1598,7 +1603,6 @@
     <!-- RIGHT: NODE MAP -->
     <div class="library-panel">
       <div class="node-map-container" id="nodeMapContainer">
-        <!-- Nodes -->
         <div class="nodes-layer" id="nodesLayer">
           <div class="node-map-empty" id="nodeMapEmpty">
             <i class="fas fa-diagram-project"></i>
@@ -1607,12 +1611,10 @@
           </div>
         </div>
 
-        <!-- Status Bar -->
         <div class="status-bar" id="statusBar">
           <span id="statusText">Click a node to highlight connections</span>
         </div>
 
-        <!-- Map Controls -->
         <div class="map-controls">
           <span class="pan-hint"><i class="fas fa-hand-paper"></i> Drag to pan</span>
           <button onclick="zoomMap(1.2)"><i class="fas fa-plus"></i></button>
@@ -1630,7 +1632,7 @@
 
   <script>
     // ============================================================
-    // CURSOR EFFECT
+    // CURSOR EFFECT (same as before)
     // ============================================================
     (function initCursor() {
       const trail = document.getElementById('cursorTrail');
@@ -1688,7 +1690,6 @@
       document.getElementById('currentThemeIcon').textContent = icons[theme] || '🌙';
       document.getElementById('themeDropdown').classList.remove('open');
       
-      // Update cursor trail color
       const trail = document.getElementById('cursorTrail');
       if (trail) {
         const accentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent-primary').trim();
@@ -1714,13 +1715,12 @@
     });
 
     // ============================================================
-    // NODE MAP SYSTEM - FIXED DRAG
+    // NODE MAP SYSTEM - FIXED
     // ============================================================
     let nodePositions = {};
     let zoomLevel = 1;
     let panOffset = { x: 0, y: 0 };
     let focusedNodeId = null;
-    let particleInterval = null;
     
     let isDraggingNode = false;
     let dragTarget = null;
@@ -1734,20 +1734,19 @@
     let updateTimeout = null;
 
     // ============================================================
-    // FOCUS & GLOW SYSTEM
+    // FOCUS & GLOW SYSTEM - FIXED: Shows both parent and child connections
     // ============================================================
     function clearFocus() {
       focusedNodeId = null;
-      if (particleInterval) {
-        clearInterval(particleInterval);
-        particleInterval = null;
-      }
+      
       document.querySelectorAll('.node-item').forEach(el => {
-        el.classList.remove('glow-continue', 'glow-choice', 'glow-loop', 'glow-end', 'glow-selected', 'faded');
+        el.classList.remove('glow-continue', 'glow-choice', 'glow-loop', 'glow-end', 'glow-parent', 'glow-selected', 'faded');
         const particles = el.querySelector('.node-particles');
         if (particles) particles.remove();
       });
-      document.querySelectorAll('.flow-line').forEach(el => el.remove());
+      
+      document.querySelectorAll('.flow-line, .receiver-dot').forEach(el => el.remove());
+      
       const statusBar = document.getElementById('statusBar');
       statusBar.classList.remove('visible');
       document.getElementById('statusText').textContent = 'Click a node to highlight connections';
@@ -1771,7 +1770,8 @@
         continue: 'glow-continue',
         choice: 'glow-choice',
         loop: 'glow-loop',
-        end: 'glow-end'
+        end: 'glow-end',
+        parent: 'glow-parent'
       };
       return classes[type] || 'glow-continue';
     }
@@ -1781,7 +1781,8 @@
         continue: 'continue-particle',
         choice: 'choice-particle',
         loop: 'loop-particle',
-        end: 'end-particle'
+        end: 'end-particle',
+        parent: 'parent-particle'
       };
       return classes[type] || 'continue-particle';
     }
@@ -1794,18 +1795,18 @@
       container.className = 'node-particles';
       
       const particleClass = getParticleClass(type);
-      const numParticles = type === 'loop' ? 12 : 8;
+      const numParticles = type === 'loop' ? 10 : 6;
       
       for (let i = 0; i < numParticles; i++) {
         const particle = document.createElement('div');
         particle.className = `particle ${particleClass}`;
         
-        const angle = (i / numParticles) * Math.PI * 2;
-        const distance = 40 + Math.random() * 40;
+        const angle = (i / numParticles) * Math.PI * 2 + Math.random() * 0.3;
+        const distance = 30 + Math.random() * 50;
         const tx = Math.cos(angle) * distance;
         const ty = Math.sin(angle) * distance;
         
-        const size = 3 + Math.random() * 5;
+        const size = 2 + Math.random() * 4;
         particle.style.width = size + 'px';
         particle.style.height = size + 'px';
         particle.style.setProperty('--tx', tx + 'px');
@@ -1813,26 +1814,15 @@
         particle.style.animationDelay = (Math.random() * 2) + 's';
         particle.style.animationDuration = (1.5 + Math.random() * 1) + 's';
         
-        container.appendChild(particle);
-      }
-      
-      if (type === 'continue' || type === 'choice') {
-        for (let i = 0; i < 6; i++) {
-          const particle = document.createElement('div');
-          particle.className = `particle ${particleClass} emitting`;
-          const angle = (i / 6) * Math.PI * 2 + Math.random() * 0.5;
-          const distance = 30 + Math.random() * 50;
-          const tx = Math.cos(angle) * distance;
-          const ty = Math.sin(angle) * distance;
-          const size = 2 + Math.random() * 4;
-          particle.style.width = size + 'px';
-          particle.style.height = size + 'px';
-          particle.style.setProperty('--tx', tx + 'px');
-          particle.style.setProperty('--ty', ty + 'px');
-          particle.style.animationDelay = (Math.random() * 0.5) + 's';
-          particle.style.animationDuration = (1.2 + Math.random() * 0.8) + 's';
-          container.appendChild(particle);
+        if (type === 'loop') {
+          particle.style.setProperty('--dist', distance + 'px');
+          particle.style.animation = 'particleOrbit 2s linear infinite';
+          particle.style.animationDelay = (i / numParticles) + 's';
+        } else {
+          particle.style.animation = 'particleEmit 1.5s ease-in-out infinite';
         }
+        
+        container.appendChild(particle);
       }
       
       node.appendChild(container);
@@ -1845,21 +1835,43 @@
       const scene = scenesDatabase[nodeId];
       if (!scene) return;
 
-      const connections = new Map();
+      // Find all connections (both incoming and outgoing)
+      const connections = new Map(); // nodeId -> {type: string, direction: 'parent'|'child'}
       
+      // OUTGOING connections (children)
       if (scene.nextSceneId) {
         const type = getConnectionType(scene, scene.nextSceneId);
-        connections.set(scene.nextSceneId, type);
+        connections.set(scene.nextSceneId, { type, direction: 'child' });
       }
       
       if (scene.choices) {
         scene.choices.forEach(choice => {
           if (choice.nextSceneId) {
             const type = getConnectionType(scene, choice.nextSceneId);
-            connections.set(choice.nextSceneId, type);
+            connections.set(choice.nextSceneId, { type, direction: 'child' });
           }
         });
       }
+
+      // INCOMING connections (parents) - find all scenes that point to this node
+      Object.keys(scenesDatabase).forEach(otherId => {
+        if (otherId === nodeId) return;
+        const otherScene = scenesDatabase[otherId];
+        
+        // Check if other scene's nextSceneId points to this node
+        if (otherScene.nextSceneId === nodeId) {
+          connections.set(otherId, { type: 'parent', direction: 'parent' });
+        }
+        
+        // Check if any of other scene's choices point to this node
+        if (otherScene.choices) {
+          otherScene.choices.forEach(choice => {
+            if (choice.nextSceneId === nodeId) {
+              connections.set(otherId, { type: 'parent', direction: 'parent' });
+            }
+          });
+        }
+      });
 
       const allNodes = document.querySelectorAll('.node-item');
       
@@ -1876,29 +1888,48 @@
           createParticles(el, 'continue');
           
           const connCount = connections.size;
+          const parentCount = Array.from(connections.values()).filter(c => c.direction === 'parent').length;
+          const childCount = Array.from(connections.values()).filter(c => c.direction === 'child').length;
+          
           const statusText = document.getElementById('statusText');
-          statusText.innerHTML = `🎯 <span class="highlight">${id}</span> → ${connCount} connection${connCount !== 1 ? 's' : ''}`;
+          let statusMsg = `🎯 <span class="highlight">${id}</span> → `;
+          if (parentCount > 0) statusMsg += `⬅️ ${parentCount} parent${parentCount > 1 ? 's' : ''} `;
+          if (childCount > 0) statusMsg += `➡️ ${childCount} child${childCount > 1 ? 'ren' : ''}`;
+          if (connCount === 0) statusMsg = `📌 <span class="highlight">${id}</span> has no connections`;
+          statusText.innerHTML = statusMsg;
           document.getElementById('statusBar').classList.add('visible');
           
         } else if (connections.has(id)) {
-          const type = connections.get(id);
-          const glowClass = getGlowClass(type);
+          const conn = connections.get(id);
+          const glowClass = getGlowClass(conn.type);
           el.classList.remove('faded');
           el.classList.add(glowClass);
-          createParticles(el, type);
+          createParticles(el, conn.type);
           
-          createFlowLine(document.querySelector(`.node-item[data-id="${nodeId}"]`), el, type);
+          const fromNode = document.querySelector(`.node-item[data-id="${nodeId}"]`);
+          const toNode = el;
+          
+          if (fromNode && toNode) {
+            // Draw connection with direction
+            if (conn.direction === 'child') {
+              // From focused node to child
+              createFlowLine(fromNode, toNode, conn.type, false);
+            } else {
+              // From parent to focused node (reverse direction)
+              createFlowLine(toNode, fromNode, 'parent', true);
+            }
+          }
         }
       });
 
       if (connections.size === 0) {
         const statusText = document.getElementById('statusText');
-        statusText.innerHTML = `📌 <span class="highlight">${nodeId}</span> has no outgoing connections`;
+        statusText.innerHTML = `📌 <span class="highlight">${nodeId}</span> has no connections`;
         document.getElementById('statusBar').classList.add('visible');
       }
     }
 
-    function createFlowLine(fromNode, toNode, type) {
+    function createFlowLine(fromNode, toNode, type, isParent = false) {
       if (!fromNode || !toNode) return;
       
       const container = document.getElementById('nodeMapContainer');
@@ -1936,7 +1967,8 @@
       const d = `M ${x1} ${y1} C ${cx1} ${cy1}, ${cx2} ${cy2}, ${x2} ${y2}`;
       
       path.setAttribute('d', d);
-      path.setAttribute('class', `line-path ${type}-path animate`);
+      const pathClass = isParent ? 'parent-path' : `${type}-path`;
+      path.setAttribute('class', `line-path ${pathClass} ${!isParent ? 'animate' : ''}`);
       
       const filterId = 'flowGlow' + Math.random().toString(36).substr(2, 6);
       const filter = document.createElementNS('http://www.w3.org/2000/svg', 'filter');
@@ -1949,22 +1981,23 @@
       line.appendChild(svg);
       container.appendChild(line);
       
-      const dot = document.createElement('div');
-      dot.style.position = 'absolute';
-      dot.style.left = (x2 - 4) + 'px';
-      dot.style.top = (y2 - 4) + 'px';
-      dot.style.width = '8px';
-      dot.style.height = '8px';
-      dot.style.borderRadius = '50%';
-      dot.style.background = getComputedStyle(document.documentElement).getPropertyValue(`--conn-${type}`).trim();
-      dot.style.boxShadow = `0 0 20px ${getComputedStyle(document.documentElement).getPropertyValue(`--conn-${type}`).trim()}`;
-      dot.style.zIndex = '3';
-      dot.style.animation = 'pulse 1s ease-in-out infinite';
-      container.appendChild(dot);
+      // Receiver dot only for child connections
+      if (!isParent) {
+        const dot = document.createElement('div');
+        dot.className = 'receiver-dot';
+        const color = getComputedStyle(document.documentElement).getPropertyValue(`--conn-${type}`).trim();
+        dot.style.left = (x2 - 5) + 'px';
+        dot.style.top = (y2 - 5) + 'px';
+        dot.style.width = '10px';
+        dot.style.height = '10px';
+        dot.style.background = color;
+        dot.style.boxShadow = `0 0 20px ${color}`;
+        container.appendChild(dot);
+      }
     }
 
     // ============================================================
-    // NODE RENDERER - FIXED DRAG
+    // NODE RENDERER
     // ============================================================
     function getNodeType(scene) {
       if (!scene) return 'start';
@@ -1980,10 +2013,7 @@
       const ids = Object.keys(scenesDatabase);
 
       container.querySelectorAll('.node-item').forEach(el => el.remove());
-      document.querySelectorAll('.flow-line').forEach(el => el.remove());
-      document.querySelectorAll('.flow-line + div').forEach(el => {
-        if (el.style.animation === 'pulse 1s ease-in-out infinite') el.remove();
-      });
+      document.querySelectorAll('.flow-line, .receiver-dot').forEach(el => el.remove());
 
       if (ids.length === 0) {
         empty.style.display = 'flex';
@@ -2014,7 +2044,7 @@
 
       ids.forEach(id => {
         const scene = scenesDatabase[id];
-        const pos = nodePositions[id] || { x: 100 + Math.random() * 200, y: 100 + Math.random() * 200 };
+        const pos = nodePositions[id];
         const type = getNodeType(scene);
         
         const node = document.createElement('div');
@@ -2045,7 +2075,6 @@
           </div>
         `;
 
-        // Click to highlight
         node.addEventListener('click', (e) => {
           if (e.target.closest('button')) return;
           if (focusedNodeId === id) {
@@ -2055,11 +2084,9 @@
           }
         });
 
-        // DRAG - FIXED: Store start positions properly
         node.addEventListener('mousedown', (e) => {
           if (e.target.closest('button')) return;
           
-          // Store the node's current position and mouse start position
           dragStartNodeX = parseFloat(node.style.left) || 0;
           dragStartNodeY = parseFloat(node.style.top) || 0;
           dragStartMouseX = e.clientX;
@@ -2076,7 +2103,6 @@
         container.appendChild(node);
       });
 
-      // Setup map events
       const mapContainer = document.getElementById('nodeMapContainer');
       
       mapContainer.addEventListener('wheel', (e) => {
@@ -2109,22 +2135,17 @@
         mapContainer.style.cursor = 'grabbing';
       });
 
-      // DRAG - FIXED: Use proper coordinate calculation
       document.addEventListener('mousemove', (e) => {
         if (isDraggingNode && dragTarget) {
-          // Calculate the mouse delta in screen space
           const deltaX = (e.clientX - dragStartMouseX);
           const deltaY = (e.clientY - dragStartMouseY);
           
-          // Convert screen delta to world space (account for zoom)
           const worldDeltaX = deltaX / zoomLevel;
           const worldDeltaY = deltaY / zoomLevel;
           
-          // Calculate new position
           const newX = dragStartNodeX + worldDeltaX;
           const newY = dragStartNodeY + worldDeltaY;
           
-          // Apply position
           dragTarget.style.left = newX + 'px';
           dragTarget.style.top = newY + 'px';
           
@@ -2133,7 +2154,6 @@
             nodePositions[id] = { x: newX, y: newY };
           }
           
-          // Update connections if focused
           if (focusedNodeId) {
             clearTimeout(updateTimeout);
             updateTimeout = setTimeout(() => highlightConnections(focusedNodeId), 50);
@@ -2830,18 +2850,14 @@
       }
     });
 
-    // ============================================================
-    // CLEANUP
-    // ============================================================
     window.addEventListener('beforeunload', function() {
       if (autosaveTimer) clearInterval(autosaveTimer);
-      if (particleInterval) clearInterval(particleInterval);
     });
 
     console.log('🚀 Narrative Forge Pro loaded!');
     console.log('📖 Shortcuts: Ctrl+S=Save, Ctrl+Shift+A=Toggle Auto-save, L=Auto-layout, 0=Reset View, Esc=Clear Focus');
-    console.log('🎯 Click any node to highlight its connections with colored glow effects!');
-    console.log('🖱️ Drag fix: Nodes now drag smoothly without flying away!');
+    console.log('🎯 Click any node to see both parent (incoming) and child (outgoing) connections!');
+    console.log('💜 Purple dashed lines = parent connections (incoming)');
   </script>
 </body>
 </html>
