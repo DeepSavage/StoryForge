@@ -3,474 +3,1107 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-  <title>✨ Narrative Forge | Professional Story Builder</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <title>✨ Narrative Forge Pro | Story Builder Suite</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
+    /* ===== GLOBAL RESET & ROOT ===== */
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
     }
 
+    :root {
+      --bg-primary: #0A0F1C;
+      --bg-secondary: #111827;
+      --bg-card: #0F172A;
+      --bg-input: #0F172A;
+      --border-color: #1E293B;
+      --border-hover: #3B82F6;
+      --text-primary: #F1F5F9;
+      --text-secondary: #94A3B8;
+      --text-muted: #64748B;
+      --accent-blue: #38BDF8;
+      --accent-blue-dark: #0EA5E9;
+      --accent-purple: #8B5CF6;
+      --accent-green: #34D399;
+      --accent-red: #F87171;
+      --gradient-primary: linear-gradient(135deg, #0EA5E9, #3B82F6);
+      --gradient-success: linear-gradient(135deg, #10B981, #059669);
+      --shadow-glow: 0 4px 20px rgba(14, 165, 233, 0.15);
+      --radius-lg: 16px;
+      --radius-md: 12px;
+      --radius-sm: 8px;
+      --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
     body {
-      font-family: 'Inter', system-ui, -apple-system, sans-serif;
-      background: radial-gradient(circle at 10% 20%, #0B1120, #030712);
-      color: #EFF3F8;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
       height: 100vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ===== SCROLLBAR ===== */
+    ::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
+    }
+    ::-webkit-scrollbar-track {
+      background: var(--bg-secondary);
+      border-radius: 10px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #334155;
+      border-radius: 10px;
+      transition: var(--transition);
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #475569;
+    }
+
+    /* ===== TOP NAVBAR ===== */
+    .navbar {
+      background: rgba(11, 17, 32, 0.92);
+      backdrop-filter: blur(20px) saturate(180%);
+      border-bottom: 1px solid rgba(30, 41, 59, 0.6);
+      padding: 0.65rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+      z-index: 100;
+      height: 64px;
+    }
+
+    .navbar-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .navbar-brand .logo-icon {
+      width: 36px;
+      height: 36px;
+      background: var(--gradient-primary);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      color: white;
+      box-shadow: 0 0 20px rgba(14, 165, 233, 0.3);
+    }
+
+    .navbar-brand h1 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #FFFFFF, #94A3B8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: -0.3px;
+    }
+
+    .navbar-brand .version {
+      font-size: 0.6rem;
+      background: rgba(56, 189, 248, 0.15);
+      padding: 2px 10px;
+      border-radius: 20px;
+      color: var(--accent-blue);
+      font-weight: 600;
+      -webkit-text-fill-color: var(--accent-blue);
+    }
+
+    .navbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    /* Auto-save toggle */
+    .autosave-toggle {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--bg-secondary);
+      padding: 6px 14px 6px 18px;
+      border-radius: 40px;
+      border: 1px solid var(--border-color);
+      transition: var(--transition);
+    }
+
+    .autosave-toggle:hover {
+      border-color: var(--border-hover);
+    }
+
+    .autosave-toggle .label {
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .autosave-toggle .label i {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+    }
+
+    /* Toggle Switch */
+    .toggle-switch {
+      position: relative;
+      width: 40px;
+      height: 22px;
+      background: #1E293B;
+      border-radius: 40px;
+      cursor: pointer;
+      transition: var(--transition);
+      flex-shrink: 0;
+    }
+
+    .toggle-switch.active {
+      background: var(--gradient-primary);
+      box-shadow: 0 0 12px rgba(14, 165, 233, 0.4);
+    }
+
+    .toggle-switch .slider {
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 18px;
+      height: 18px;
+      background: white;
+      border-radius: 50%;
+      transition: var(--transition);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+
+    .toggle-switch.active .slider {
+      left: 20px;
+    }
+
+    .autosave-status {
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      min-width: 60px;
+      text-align: right;
+    }
+
+    .autosave-status.saving {
+      color: var(--accent-blue);
+      animation: pulse 1s infinite;
+    }
+
+    .autosave-status.saved {
+      color: var(--accent-green);
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    .navbar-stats {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+    }
+
+    .navbar-stats .stat-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      background: var(--bg-secondary);
+      padding: 4px 12px;
+      border-radius: 20px;
+      border: 1px solid var(--border-color);
+    }
+
+    .navbar-stats .stat-item i {
+      color: var(--accent-blue);
+      font-size: 0.65rem;
+    }
+
+    /* ===== MAIN LAYOUT ===== */
+    .app-wrapper {
+      display: flex;
+      flex: 1;
       overflow: hidden;
     }
 
-    ::-webkit-scrollbar {
-      width: 6px;
-      height: 6px;
-    }
-    ::-webkit-scrollbar-track {
-      background: #1E293B;
-      border-radius: 8px;
-    }
-    ::-webkit-scrollbar-thumb {
-      background: #5B6D8C;
-      border-radius: 8px;
-    }
-    ::-webkit-scrollbar-thumb:hover {
-      background: #8196B3;
-    }
-
-    .app-wrapper {
-      display: flex;
-      height: 100vh;
-      width: 100%;
-      backdrop-filter: blur(1px);
-    }
-
+    /* ===== LEFT PANEL ===== */
     .editor-panel {
       width: 42%;
+      min-width: 380px;
       background: rgba(15, 23, 42, 0.85);
       backdrop-filter: blur(12px);
-      border-right: 1px solid rgba(71, 85, 105, 0.5);
+      border-right: 1px solid rgba(30, 41, 59, 0.5);
       overflow-y: auto;
-      padding: 1.75rem 1.8rem;
-      box-shadow: 8px 0 20px rgba(0,0,0,0.3);
+      padding: 1.5rem 1.8rem;
     }
 
-    .library-panel {
-      width: 58%;
-      background: #0A0F1C;
-      overflow-y: auto;
-      padding: 1.75rem 2rem;
-      background-image: radial-gradient(rgba(56, 189, 248, 0.03) 1px, transparent 1px);
-      background-size: 32px 32px;
-    }
-
-    .logo-area {
+    .panel-header {
       display: flex;
+      justify-content: space-between;
       align-items: center;
-      gap: 12px;
-      margin-bottom: 1rem;
-      border-bottom: 2px solid rgba(56, 189, 248, 0.3);
-      padding-bottom: 0.75rem;
-    }
-    .logo-area i {
-      font-size: 2rem;
-      color: #38BDF8;
-      filter: drop-shadow(0 0 4px #0EA5E9);
-    }
-    .logo-area h1 {
-      font-weight: 700;
-      font-size: 1.7rem;
-      background: linear-gradient(135deg, #FFFFFF, #94A3B8);
-      background-clip: text;
-      -webkit-background-clip: text;
-      color: transparent;
-      letter-spacing: -0.3px;
-    }
-    .badge-pro {
-      background: #0F172A;
-      border: 1px solid #2DD4BF;
-      border-radius: 40px;
-      font-size: 0.7rem;
-      padding: 2px 10px;
-      font-weight: 500;
-      color: #2DD4BF;
-      margin-left: 8px;
-    }
-
-    .info-note {
-      background: #111827CC;
-      border-left: 4px solid #38BDF8;
-      border-radius: 12px;
-      padding: 12px 16px;
-      font-size: 0.8rem;
-      margin: 1rem 0 1.2rem 0;
-      backdrop-filter: blur(4px);
-      display: flex;
-      gap: 12px;
-      align-items: center;
-      flex-wrap: wrap;
-    }
-    .info-note i {
-      font-size: 1.2rem;
-      color: #7DD3FC;
-    }
-    .info-note span {
-      font-weight: 500;
-    }
-
-    .form-group {
       margin-bottom: 1.25rem;
     }
-    label {
+
+    .panel-header h2 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .panel-header h2 i {
+      color: var(--accent-blue);
+    }
+
+    .panel-header .badge {
+      font-size: 0.6rem;
+      background: rgba(56, 189, 248, 0.12);
+      padding: 3px 12px;
+      border-radius: 20px;
+      color: var(--accent-blue);
+      font-weight: 500;
+    }
+
+    /* Info banner */
+    .info-banner {
+      background: linear-gradient(135deg, rgba(14, 165, 233, 0.08), rgba(139, 92, 246, 0.08));
+      border: 1px solid rgba(56, 189, 248, 0.15);
+      border-radius: var(--radius-md);
+      padding: 12px 16px;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    .info-banner i {
+      color: var(--accent-blue);
+      font-size: 1rem;
+      flex-shrink: 0;
+    }
+
+    .info-banner strong {
+      color: var(--text-primary);
+    }
+
+    /* Form groups */
+    .form-group {
+      margin-bottom: 1rem;
+    }
+
+    .form-label {
       display: flex;
       align-items: center;
       gap: 8px;
       font-weight: 500;
-      font-size: 0.85rem;
-      letter-spacing: 0.3px;
-      color: #CBD5E1;
-      margin-bottom: 6px;
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+      margin-bottom: 5px;
+      letter-spacing: 0.2px;
     }
-    label i {
-      width: 18px;
-      color: #38BDF8;
-      font-size: 0.85rem;
+
+    .form-label i {
+      width: 16px;
+      color: var(--accent-blue);
+      font-size: 0.7rem;
     }
-    input, textarea, select {
+
+    .form-label .required {
+      color: var(--accent-red);
+      font-size: 0.6rem;
+    }
+
+    .form-control {
       width: 100%;
-      background: #0F172A;
-      border: 1px solid #334155;
-      border-radius: 14px;
+      background: var(--bg-input);
+      border: 1.5px solid var(--border-color);
+      border-radius: var(--radius-sm);
       padding: 10px 14px;
       font-family: 'Inter', monospace;
-      font-size: 0.9rem;
-      color: #F1F5F9;
-      transition: all 0.2s ease;
-    }
-    input:focus, textarea:focus, select:focus {
-      outline: none;
-      border-color: #38BDF8;
-      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2);
-      background: #111827;
-    }
-    textarea {
-      resize: vertical;
-      min-height: 75px;
+      font-size: 0.85rem;
+      color: var(--text-primary);
+      transition: var(--transition);
     }
 
-    .choices-container {
-      background: rgba(0, 0, 0, 0.2);
-      border-radius: 20px;
-      padding: 10px;
-      margin-top: 6px;
+    .form-control:focus {
+      outline: none;
+      border-color: var(--border-hover);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+      background: #111B2E;
     }
-    .choice-card {
-      background: #111827;
-      border-radius: 16px;
-      padding: 12px;
-      margin-bottom: 12px;
-      border: 1px solid #2D3A5E;
-      transition: all 0.2s;
+
+    .form-control::placeholder {
+      color: var(--text-muted);
+      opacity: 0.6;
     }
-    .choice-card .choice-row {
-      display: flex;
+
+    textarea.form-control {
+      resize: vertical;
+      min-height: 70px;
+      line-height: 1.5;
+    }
+
+    select.form-control {
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2364748B' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      padding-right: 36px;
+      cursor: pointer;
+    }
+
+    select.form-control option {
+      background: #1E293B;
+      color: var(--text-primary);
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
       gap: 12px;
-      flex-wrap: wrap;
-      align-items: center;
     }
-    .choice-card .choice-row input {
-      flex: 2;
+
+    /* Choices container */
+    .choices-container {
+      background: rgba(0, 0, 0, 0.25);
+      border-radius: var(--radius-md);
+      padding: 10px;
+      margin-top: 4px;
+      min-height: 40px;
+      border: 1px dashed rgba(30, 41, 59, 0.4);
+    }
+
+    .choice-card {
+      background: var(--bg-card);
+      border-radius: var(--radius-sm);
+      padding: 12px;
+      margin-bottom: 10px;
+      border: 1px solid var(--border-color);
+      transition: var(--transition);
+    }
+
+    .choice-card:last-child {
       margin-bottom: 0;
     }
-    .choice-card .choice-row select {
-      flex: 1.2;
-    }
-    .choice-actions {
-      display: flex;
-      justify-content: flex-end;
-      margin-top: 8px;
-    }
-    .btn-icon-sm {
-      background: none;
-      border: none;
-      color: #F87171;
-      cursor: pointer;
-      font-size: 0.8rem;
-      padding: 5px 8px;
-      border-radius: 20px;
-      transition: 0.2s;
-    }
-    .btn-icon-sm:hover {
-      background: #450A0A;
-      color: #FF8A8A;
+
+    .choice-card:hover {
+      border-color: #2D3A5E;
     }
 
-    button, .btn-like {
-      background: #1E293B;
+    .choice-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .choice-row .form-control {
+      flex: 1;
+      min-width: 120px;
+    }
+
+    .choice-row .form-control:first-child {
+      flex: 1.5;
+    }
+
+    .choice-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+      justify-content: flex-end;
+    }
+
+    .btn-icon {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 0.7rem;
+      transition: var(--transition);
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .btn-icon:hover {
+      background: rgba(248, 113, 113, 0.12);
+      color: var(--accent-red);
+    }
+
+    .btn-icon.create-target {
+      color: var(--accent-blue);
+    }
+
+    .btn-icon.create-target:hover {
+      background: rgba(56, 189, 248, 0.12);
+      color: var(--accent-blue-dark);
+    }
+
+    /* Buttons */
+    .btn {
       border: none;
       border-radius: 40px;
-      padding: 8px 18px;
+      padding: 8px 20px;
       font-weight: 500;
       font-size: 0.8rem;
-      color: #E2E8F0;
+      color: var(--text-primary);
       cursor: pointer;
-      transition: all 0.2s;
+      transition: var(--transition);
       display: inline-flex;
       align-items: center;
       gap: 8px;
+      font-family: 'Inter', sans-serif;
     }
-    button i, .btn-like i {
-      font-size: 0.9rem;
+
+    .btn i {
+      font-size: 0.85rem;
     }
-    button:hover {
-      background: #2D3A5E;
-      transform: translateY(-1px);
-      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-    }
+
     .btn-primary {
-      background: linear-gradient(105deg, #0EA5E9, #3B82F6);
+      background: var(--gradient-primary);
       color: white;
-      box-shadow: 0 2px 6px rgba(14,165,233,0.3);
+      box-shadow: 0 2px 12px rgba(14, 165, 233, 0.25);
     }
+
     .btn-primary:hover {
-      background: linear-gradient(105deg, #38BDF8, #2563EB);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 20px rgba(14, 165, 233, 0.35);
     }
+
     .btn-success {
-      background: linear-gradient(105deg, #10B981, #059669);
+      background: var(--gradient-success);
       color: white;
     }
+
     .btn-success:hover {
-      background: linear-gradient(105deg, #34D399, #10B981);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 20px rgba(16, 185, 129, 0.35);
     }
+
+    .btn-secondary {
+      background: var(--bg-secondary);
+      color: var(--text-secondary);
+      border: 1px solid var(--border-color);
+    }
+
+    .btn-secondary:hover {
+      background: #1E293B;
+      border-color: #334155;
+    }
+
     .btn-danger {
       background: #7F1D1D;
+      color: white;
     }
+
     .btn-danger:hover {
       background: #B91C1C;
     }
+
     .btn-warning {
+      background: #78350F;
+      color: white;
+    }
+
+    .btn-warning:hover {
       background: #92400E;
     }
-    .btn-warning:hover {
-      background: #B45309;
+
+    .btn-sm {
+      padding: 5px 14px;
+      font-size: 0.7rem;
     }
+
+    .btn-xs {
+      padding: 3px 10px;
+      font-size: 0.65rem;
+    }
+
     .action-bar {
       display: flex;
-      gap: 12px;
+      gap: 10px;
       flex-wrap: wrap;
-      margin: 15px 0 10px;
+      margin: 12px 0 8px;
     }
 
     hr {
       border: none;
       height: 1px;
-      background: linear-gradient(90deg, #1E293B, #475569, #1E293B);
-      margin: 1.5rem 0;
+      background: linear-gradient(90deg, transparent, var(--border-color), transparent);
+      margin: 1.25rem 0;
     }
 
+    /* Data management section */
+    .data-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    /* Export preview */
+    .export-preview {
+      background: #020617;
+      border-radius: var(--radius-md);
+      margin-top: 14px;
+      padding: 14px;
+      border: 1px solid var(--border-color);
+    }
+
+    .export-preview .export-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .export-preview .export-header strong {
+      font-size: 0.8rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-secondary);
+    }
+
+    .export-preview textarea {
+      width: 100%;
+      background: #01000F;
+      border: 1px solid #1E293B;
+      border-radius: var(--radius-sm);
+      padding: 10px;
+      color: var(--text-secondary);
+      font-family: 'Fira Code', monospace;
+      font-size: 0.65rem;
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    /* ===== RIGHT PANEL ===== */
+    .library-panel {
+      flex: 1;
+      background: var(--bg-primary);
+      overflow-y: auto;
+      padding: 1.5rem 2rem;
+      background-image: radial-gradient(rgba(56, 189, 248, 0.02) 1px, transparent 1px);
+      background-size: 32px 32px;
+    }
+
+    .library-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-bottom: 1.25rem;
+    }
+
+    .library-header h2 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .library-header h2 i {
+      color: var(--accent-blue);
+    }
+
+    .library-stats {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+    }
+
+    .library-stats .count {
+      background: var(--bg-secondary);
+      padding: 4px 14px;
+      border-radius: 40px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      border: 1px solid var(--border-color);
+    }
+
+    .library-stats .count i {
+      color: var(--accent-blue);
+      margin-right: 5px;
+    }
+
+    .search-box {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 40px;
+      padding: 5px 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: var(--transition);
+    }
+
+    .search-box:focus-within {
+      border-color: var(--border-hover);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    .search-box input {
+      background: transparent;
+      border: none;
+      color: var(--text-primary);
+      font-size: 0.78rem;
+      padding: 6px 0;
+      width: 140px;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .search-box input:focus {
+      outline: none;
+    }
+
+    .search-box input::placeholder {
+      color: var(--text-muted);
+    }
+
+    .search-box i {
+      color: var(--text-muted);
+      font-size: 0.75rem;
+    }
+
+    /* Scene cards grid */
     .scene-grid {
       display: flex;
       flex-direction: column;
-      gap: 14px;
-      margin-top: 18px;
+      gap: 12px;
     }
+
     .scene-card {
-      background: #0F172A;
-      border-radius: 20px;
+      background: var(--bg-card);
+      border-radius: var(--radius-md);
       padding: 16px 20px;
-      border: 1px solid #27344F;
-      transition: all 0.2s;
-      position: relative;
+      border: 1px solid var(--border-color);
+      transition: var(--transition);
+      cursor: default;
     }
+
     .scene-card:hover {
-      border-color: #3B82F6;
-      background: #111B2E;
+      border-color: #2D3A5E;
       transform: translateX(4px);
+      background: #111B2E;
     }
-    .scene-header {
+
+    .scene-card .scene-header {
       display: flex;
       justify-content: space-between;
-      align-items: baseline;
+      align-items: center;
       flex-wrap: wrap;
-      margin-bottom: 10px;
+      gap: 8px;
+      margin-bottom: 8px;
     }
-    .scene-id {
-      font-weight: 700;
-      font-size: 1.1rem;
-      background: #0EA5E910;
-      padding: 3px 12px;
-      border-radius: 60px;
-      font-family: monospace;
-      color: #7DD3FC;
-    }
-    .scene-dialogue {
+
+    .scene-card .scene-id-badge {
+      font-weight: 600;
       font-size: 0.85rem;
-      color: #CBD5E1;
-      margin: 8px 0;
-      line-height: 1.4;
+      background: rgba(14, 165, 233, 0.08);
+      padding: 2px 14px;
+      border-radius: 40px;
+      font-family: monospace;
+      color: var(--accent-blue);
+      border: 1px solid rgba(56, 189, 248, 0.1);
     }
-    .scene-meta {
-      font-size: 0.7rem;
-      color: #6B7280;
+
+    .scene-card .scene-type-tag {
+      font-size: 0.6rem;
+      background: var(--bg-secondary);
+      padding: 2px 12px;
+      border-radius: 40px;
+      color: var(--text-muted);
+      border: 1px solid var(--border-color);
+    }
+
+    .scene-card .scene-dialogue {
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      margin: 6px 0 10px;
+      padding-left: 4px;
+      border-left: 2px solid rgba(56, 189, 248, 0.2);
+      padding-left: 12px;
+    }
+
+    .scene-card .scene-dialogue i {
+      color: var(--text-muted);
+      font-size: 0.6rem;
+      margin-right: 4px;
+    }
+
+    .scene-card .scene-meta {
       display: flex;
+      flex-wrap: wrap;
       gap: 12px;
-      margin-top: 6px;
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      margin-bottom: 12px;
     }
-    .card-actions {
+
+    .scene-card .scene-meta span {
       display: flex;
-      gap: 10px;
-      margin-top: 12px;
+      align-items: center;
+      gap: 4px;
     }
+
+    .scene-card .scene-meta i {
+      font-size: 0.6rem;
+    }
+
+    .scene-card .card-actions {
+      display: flex;
+      gap: 8px;
+    }
+
     .empty-library {
       text-align: center;
-      padding: 40px 20px;
-      color: #5B6D8C;
+      padding: 60px 20px;
+      color: var(--text-muted);
     }
 
-    .export-preview {
-      background: #020617;
-      border-radius: 18px;
-      margin-top: 20px;
-      padding: 12px;
+    .empty-library i {
+      font-size: 2.5rem;
+      color: var(--border-color);
+      margin-bottom: 16px;
+      display: block;
     }
-    .export-preview textarea {
-      font-family: 'Fira Code', monospace;
+
+    .empty-library p {
+      font-size: 0.85rem;
+    }
+
+    .empty-library small {
       font-size: 0.7rem;
-      background: #01000F;
+      color: var(--text-muted);
     }
-    .tooltip-note {
-      font-size: 0.7rem;
-      color: #8196B3;
-      margin-top: 6px;
+
+    /* ===== TOAST NOTIFICATIONS ===== */
+    .toast-container {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-width: 360px;
     }
-    
-    .quick-create-btn {
-      background: #1E3A5F;
-      border: 1px dashed #38BDF8;
-      padding: 4px 12px;
-      border-radius: 30px;
-      font-size: 0.75rem;
-      color: #7DD3FC;
-      cursor: pointer;
-      transition: 0.2s;
-      display: inline-flex;
+
+    .toast {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 12px 18px;
+      display: flex;
       align-items: center;
-      gap: 6px;
-    }
-    .quick-create-btn:hover {
-      background: #2A4A7A;
-      border-color: #60A5FA;
+      gap: 12px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+      animation: slideUp 0.4s ease;
+      backdrop-filter: blur(12px);
     }
 
-    @media (max-width: 800px) {
-      .editor-panel { width: 100%; }
-      .library-panel { width: 100%; display: none; }
-      .app-wrapper { flex-direction: column; }
+    .toast.success {
+      border-left: 3px solid var(--accent-green);
+    }
+
+    .toast.error {
+      border-left: 3px solid var(--accent-red);
+    }
+
+    .toast.info {
+      border-left: 3px solid var(--accent-blue);
+    }
+
+    .toast i {
+      font-size: 1.1rem;
+    }
+
+    .toast.success i { color: var(--accent-green); }
+    .toast.error i { color: var(--accent-red); }
+    .toast.info i { color: var(--accent-blue); }
+
+    .toast .toast-msg {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      flex: 1;
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .toast.fade-out {
+      animation: slideDown 0.3s ease forwards;
+    }
+
+    @keyframes slideDown {
+      to {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 1024px) {
+      .editor-panel {
+        width: 50%;
+        min-width: 300px;
+        padding: 1.2rem;
+      }
+      .library-panel {
+        padding: 1.2rem;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .app-wrapper {
+        flex-direction: column;
+      }
+      .editor-panel {
+        width: 100%;
+        min-width: unset;
+        border-right: none;
+        border-bottom: 1px solid var(--border-color);
+        max-height: 60vh;
+      }
+      .library-panel {
+        flex: 1;
+      }
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+      .navbar {
+        padding: 0.5rem 1rem;
+        flex-wrap: wrap;
+        height: auto;
+        gap: 8px;
+      }
+      .navbar-actions {
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      .autosave-toggle .label span {
+        display: none;
+      }
+      .navbar-stats .stat-item {
+        padding: 2px 8px;
+        font-size: 0.65rem;
+      }
     }
   </style>
 </head>
 <body>
+
+<!-- ===== TOP NAVBAR ===== -->
+<nav class="navbar">
+  <div class="navbar-brand">
+    <div class="logo-icon"><i class="fas fa-code-branch"></i></div>
+    <h1>Narrative Forge</h1>
+    <span class="version">v3.0</span>
+  </div>
+
+  <div class="navbar-actions">
+    <!-- Auto-save Toggle -->
+    <div class="autosave-toggle">
+      <div class="label">
+        <i class="fas fa-save"></i>
+        <span>Auto-save</span>
+      </div>
+      <div class="toggle-switch" id="autosaveToggle" onclick="toggleAutosave()">
+        <div class="slider"></div>
+      </div>
+      <span class="autosave-status" id="autosaveStatus">● Off</span>
+    </div>
+
+    <div class="navbar-stats">
+      <div class="stat-item">
+        <i class="fas fa-layer-group"></i>
+        <span id="navSceneCount">0</span>
+      </div>
+      <div class="stat-item">
+        <i class="fas fa-code"></i>
+        <span id="navChoiceCount">0</span>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- ===== MAIN APP ===== -->
 <div class="app-wrapper">
-  <!-- LEFT PANEL: Story Editor -->
+
+  <!-- LEFT: EDITOR -->
   <div class="editor-panel">
-    <div class="logo-area">
-      <i class="fas fa-code-branch"></i>
-      <h1>Narrative Forge <span class="badge-pro">PRO EDITOR</span></h1>
+    <div class="panel-header">
+      <h2><i class="fas fa-pen-fancy"></i> Scene Editor</h2>
+      <span class="badge"><i class="fas fa-circle" style="color: #34D399; font-size: 0.4rem;"></i> Ready</span>
     </div>
-    <div class="info-note">
+
+    <div class="info-banner">
       <i class="fas fa-lightbulb"></i>
-      <span><strong>🧭 Quick Guide:</strong> Create scenes → Add choices or "Continue" → Save → Export JSON. Use <i class="fas fa-upload"></i> Import to load existing story.</span>
+      <div>
+        <strong>Quick Start:</strong> Enter scene details → Add choices or set "Continue" → 
+        <strong>Save</strong> or <strong>Auto-save</strong> will keep your work safe.
+        <span style="display: block; margin-top: 4px; font-size: 0.7rem; color: var(--text-muted);">
+          <i class="fas fa-plus-circle"></i> Use <strong>"New"</strong> buttons to create target scenes on the fly!
+        </span>
+      </div>
     </div>
 
-    <!-- Scene identity -->
+    <!-- Scene ID -->
     <div class="form-group">
-      <label><i class="fas fa-tag"></i> Scene ID (unique)</label>
-      <input type="text" id="sceneId" placeholder="e.g., start, forest_entrance, final_battle" autocomplete="off">
-      <div class="tooltip-note"><i class="fas fa-info-circle"></i> Use letters, numbers or underscores. No spaces.</div>
-    </div>
-    <div class="form-group">
-      <label><i class="fas fa-user-astronaut"></i> Speaker / Character</label>
-      <input type="text" id="speaker" placeholder="Narrator, Hero, Villain ...">
-    </div>
-    <div class="form-group">
-      <label><i class="fas fa-comment-dots"></i> Dialogue / Description</label>
-      <textarea id="dialogue" placeholder="Write the story text, narration or dialogue..."></textarea>
+      <label class="form-label">
+        <i class="fas fa-tag"></i> Scene ID <span class="required">*</span>
+      </label>
+      <input type="text" id="sceneId" class="form-control" placeholder="e.g., start, forest_entrance" autocomplete="off">
+      <div style="font-size: 0.6rem; color: var(--text-muted); margin-top: 4px;">
+        <i class="fas fa-info-circle"></i> Unique identifier — letters, numbers, underscores, hyphens
+      </div>
     </div>
 
-    <div class="form-row" style="display: flex; gap: 12px; flex-wrap: wrap;">
-      <div style="flex:1">
-        <label><i class="fas fa-exchange-alt"></i> Interaction Type</label>
-        <select id="type">
-          <option value="choice">🎲 Branching Choices (multiple)</option>
-          <option value="continue">➡️ Continue / Next Scene</option>
+    <!-- Speaker -->
+    <div class="form-group">
+      <label class="form-label"><i class="fas fa-user-astronaut"></i> Speaker / Character</label>
+      <input type="text" id="speaker" class="form-control" placeholder="Narrator, Hero, Villain...">
+    </div>
+
+    <!-- Dialogue -->
+    <div class="form-group">
+      <label class="form-label"><i class="fas fa-comment-dots"></i> Dialogue / Description <span class="required">*</span></label>
+      <textarea id="dialogue" class="form-control" placeholder="Write the story text, narration or dialogue..."></textarea>
+    </div>
+
+    <!-- Type & Timer -->
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label"><i class="fas fa-exchange-alt"></i> Interaction Type</label>
+        <select id="type" class="form-control">
+          <option value="choice">🎲 Branching Choices</option>
+          <option value="continue">➡️ Continue / Next</option>
         </select>
       </div>
-      <div style="flex:1">
-        <label><i class="fas fa-hourglass-half"></i> Timer (seconds, optional)</label>
-        <input type="number" id="timer" value="0" min="0" step="1">
-        <div class="tooltip-note">0 = no timer, >0 = auto-advance after seconds</div>
+      <div class="form-group">
+        <label class="form-label"><i class="fas fa-hourglass-half"></i> Timer (seconds)</label>
+        <input type="number" id="timer" class="form-control" value="0" min="0" step="1">
+        <div style="font-size: 0.6rem; color: var(--text-muted); margin-top: 4px;">0 = no timer</div>
       </div>
     </div>
 
-    <!-- Choices dynamic block -->
-    <div style="margin-top: 1rem;">
-      <label><i class="fas fa-list-ul"></i> Choice Options (only for "Branching Choices")</label>
-      <div id="choices" class="choices-container"></div>
-      <button onclick="addChoiceField()" style="margin-top: 6px; background:#2C3E66;"><i class="fas fa-plus-circle"></i> Add new choice</button>
+    <!-- Choices -->
+    <div class="form-group">
+      <label class="form-label"><i class="fas fa-list-ul"></i> Choice Options</label>
+      <div id="choices" class="choices-container">
+        <!-- Choice cards will be added here -->
+      </div>
+      <button onclick="addChoiceField()" class="btn btn-secondary btn-sm" style="margin-top: 8px; width: 100%; justify-content: center;">
+        <i class="fas fa-plus-circle"></i> Add Choice
+      </button>
     </div>
 
     <hr>
 
+    <!-- Continue Group -->
     <div class="form-group" id="continueGroup" style="display: none;">
-      <label><i class="fas fa-arrow-right"></i> Next Scene ID (Continue type)</label>
-      <div style="display: flex; gap: 8px; align-items: center;">
-        <select id="nextScene" style="flex: 1; background:#0F172A;">
+      <label class="form-label"><i class="fas fa-arrow-right"></i> Next Scene <span class="required">*</span></label>
+      <div style="display: flex; gap: 8px;">
+        <select id="nextScene" class="form-control" style="flex: 1;">
           <option value="">-- Select target scene --</option>
         </select>
-        <button onclick="quickCreateTargetScene()" class="quick-create-btn" title="Create a new scene and set it as target">
+        <button onclick="quickCreateTargetScene()" class="btn btn-primary btn-sm" title="Create new scene and set as target">
           <i class="fas fa-plus-circle"></i> New
         </button>
       </div>
-      <div class="tooltip-note"><i class="fas fa-info-circle"></i> Choose where the story flows after this scene. Click <strong>"New"</strong> to create a target scene on the fly.</div>
+      <div style="font-size: 0.6rem; color: var(--text-muted); margin-top: 4px;">
+        <i class="fas fa-info-circle"></i> Choose where the story continues, or click <strong>New</strong> to create a fresh scene
+      </div>
     </div>
 
+    <!-- Action Bar -->
     <div class="action-bar">
-      <button class="btn-primary" onclick="saveSceneLogic()"><i class="fas fa-save"></i> Save Scene</button>
-      <button onclick="clearFormFields()"><i class="fas fa-eraser"></i> Clear Form</button>
+      <button onclick="saveSceneLogic()" class="btn btn-primary"><i class="fas fa-save"></i> Save Scene</button>
+      <button onclick="clearFormFields()" class="btn btn-secondary"><i class="fas fa-eraser"></i> Clear</button>
     </div>
 
     <hr>
 
+    <!-- Data Management -->
     <div>
-      <h3 style="font-size: 1rem; display: flex; gap: 10px; margin-bottom: 12px;"><i class="fas fa-database"></i> Data Management</h3>
-      <div style="display: flex; flex-wrap: wrap; gap: 12px;">
-        <button onclick="triggerImport()"><i class="fas fa-file-import"></i> Import HTML/JSON</button>
+      <label class="form-label"><i class="fas fa-database"></i> Data Management</label>
+      <div class="data-actions">
+        <button onclick="triggerImport()" class="btn btn-secondary btn-sm"><i class="fas fa-file-import"></i> Import</button>
         <input type="file" id="fileInput" accept=".html,.json,text/html" style="display: none;">
-        <button onclick="exportFullData()"><i class="fas fa-download"></i> Export Story JSON</button>
-        <button onclick="clearAllScenes()" class="btn-danger"><i class="fas fa-trash-alt"></i> Clear All</button>
+        <button onclick="exportFullData()" class="btn btn-success btn-sm"><i class="fas fa-download"></i> Export JSON</button>
+        <button onclick="clearAllScenes()" class="btn btn-danger btn-sm"><i class="fas fa-trash-alt"></i> Clear All</button>
       </div>
-      <div id="exportBox" style="margin-top: 16px;"></div>
+      <div id="exportBox"></div>
     </div>
-    <div class="tooltip-note" style="margin-top: 20px; text-align: center;">
-      <i class="fas fa-shield-alt"></i> Auto-save not enabled — manually save each scene after editing.
+
+    <div style="font-size: 0.6rem; color: var(--text-muted); text-align: center; margin-top: 20px; padding-top: 12px; border-top: 1px solid var(--border-color);">
+      <i class="fas fa-shield-alt"></i> All data stored locally in your browser
     </div>
   </div>
 
-  <!-- RIGHT PANEL: Scene Library -->
+  <!-- RIGHT: LIBRARY -->
   <div class="library-panel">
-    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
-      <h2 style="font-weight: 600;"><i class="fas fa-book-open"></i> Story Vault <span style="font-size: 0.8rem;">(Scenes)</span></h2>
-      <span id="sceneCountBadge" style="background:#1E293B; padding: 4px 12px; border-radius: 50px;">0 scenes</span>
+    <div class="library-header">
+      <h2><i class="fas fa-book-open"></i> Story Vault</h2>
+      <div class="library-stats">
+        <div class="search-box">
+          <i class="fas fa-search"></i>
+          <input type="text" id="searchScenes" placeholder="Search scenes..." oninput="filterScenes()">
+        </div>
+        <span class="count" id="sceneCountBadge"><i class="fas fa-layer-group"></i> 0 scenes</span>
+      </div>
     </div>
     <div id="sceneList" class="scene-grid">
-      <div class="empty-library"><i class="fas fa-folder-open"></i> No scenes created yet. Use left panel to add your first scene!</div>
+      <div class="empty-library">
+        <i class="fas fa-folder-open"></i>
+        <p>No scenes created yet</p>
+        <small>Use the editor on the left to craft your first story scene</small>
+      </div>
     </div>
   </div>
 </div>
 
+<!-- ===== TOAST CONTAINER ===== -->
+<div class="toast-container" id="toastContainer"></div>
+
 <script>
-  // ---------- STATE ----------
+  // ============================================================
+  // STATE
+  // ============================================================
   let scenesDatabase = {};
-  let currentChoiceCounter = 0;
+  let autosaveEnabled = false;
+  let autosaveTimer = null;
+  let isSaving = false;
 
   // DOM refs
   const sceneIdInput = document.getElementById("sceneId");
@@ -483,373 +1116,418 @@
   const continueGroup = document.getElementById("continueGroup");
   const sceneListDiv = document.getElementById("sceneList");
   const exportBoxDiv = document.getElementById("exportBox");
+  const sceneCountBadge = document.getElementById("sceneCountBadge");
+  const navSceneCount = document.getElementById("navSceneCount");
+  const navChoiceCount = document.getElementById("navChoiceCount");
 
-  // Helper: update visibility of continue group based on type
-  function toggleContinueField() {
-    if (typeSelect.value === "continue") {
-      continueGroup.style.display = "block";
+  // ============================================================
+  // TOAST SYSTEM
+  // ============================================================
+  function showToast(message, type = 'info', duration = 3000) {
+    const container = document.getElementById('toastContainer');
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    const iconMap = {
+      success: 'fa-check-circle',
+      error: 'fa-exclamation-circle',
+      info: 'fa-info-circle'
+    };
+    toast.innerHTML = `
+      <i class="fas ${iconMap[type] || iconMap.info}"></i>
+      <span class="toast-msg">${message}</span>
+    `;
+    container.appendChild(toast);
+    setTimeout(() => {
+      toast.classList.add('fade-out');
+      setTimeout(() => toast.remove(), 300);
+    }, duration);
+  }
+
+  // ============================================================
+  // AUTO-SAVE TOGGLE
+  // ============================================================
+  function toggleAutosave() {
+    const toggle = document.getElementById('autosaveToggle');
+    const status = document.getElementById('autosaveStatus');
+    autosaveEnabled = !autosaveEnabled;
+    toggle.classList.toggle('active', autosaveEnabled);
+
+    if (autosaveEnabled) {
+      status.textContent = '● On';
+      status.className = 'autosave-status saving';
+      showToast('Auto-save enabled — changes will save automatically', 'success');
+      // Trigger initial save of current form
+      performAutosave();
+      // Start periodic check
+      autosaveTimer = setInterval(performAutosave, 5000);
     } else {
-      continueGroup.style.display = "none";
+      status.textContent = '● Off';
+      status.className = 'autosave-status';
+      clearInterval(autosaveTimer);
+      autosaveTimer = null;
+      showToast('Auto-save disabled', 'info');
     }
   }
-  typeSelect.addEventListener("change", toggleContinueField);
+
+  function performAutosave() {
+    if (!autosaveEnabled || isSaving) return;
+    const id = sceneIdInput.value.trim();
+    if (!id) return;
+    
+    // Check if any changes exist
+    const existingScene = scenesDatabase[id];
+    const currentDialogue = dialogueInput.value.trim();
+    if (!currentDialogue) return;
+    
+    isSaving = true;
+    const status = document.getElementById('autosaveStatus');
+    status.textContent = '● Saving...';
+    status.className = 'autosave-status saving';
+    
+    // Debounce actual save
+    clearTimeout(window._autosaveTimeout);
+    window._autosaveTimeout = setTimeout(() => {
+      saveSceneLogic(true);
+      isSaving = false;
+      status.textContent = '● Saved';
+      status.className = 'autosave-status saved';
+      setTimeout(() => {
+        if (autosaveEnabled) {
+          status.textContent = '● On';
+          status.className = 'autosave-status';
+        }
+      }, 1500);
+    }, 300);
+  }
+
+  // ============================================================
+  // TOGGLE CONTINUE FIELD
+  // ============================================================
+  function toggleContinueField() {
+    continueGroup.style.display = typeSelect.value === 'continue' ? 'block' : 'none';
+  }
+  typeSelect.addEventListener('change', toggleContinueField);
   toggleContinueField();
 
-  // Refresh all dropdowns (nextScene selector + choices selects)
+  // ============================================================
+  // REFRESH DROPDOWNS with "Create New" option
+  // ============================================================
   function refreshAllDropdowns() {
     const sceneIds = Object.keys(scenesDatabase);
     
-    // Update nextScene dropdown with "Create New" option
-    let currentNextVal = nextSceneSelect.value;
+    // NextScene dropdown
+    const currentNextVal = nextSceneSelect.value;
     nextSceneSelect.innerHTML = '<option value="">-- Select target scene --</option>';
     sceneIds.forEach(id => {
-      const option = document.createElement("option");
+      const option = document.createElement('option');
       option.value = id;
       option.textContent = id;
       nextSceneSelect.appendChild(option);
     });
-    // Add a special "Create New" option at the end
-    const createOption = document.createElement("option");
-    createOption.value = "__CREATE_NEW__";
-    createOption.textContent = "➕ Create new scene...";
-    createOption.style.color = "#38BDF8";
-    createOption.style.fontWeight = "bold";
-    nextSceneSelect.appendChild(createOption);
+    const createOpt = document.createElement('option');
+    createOpt.value = '__CREATE_NEW__';
+    createOpt.textContent = '➕ Create new scene...';
+    createOpt.style.color = '#38BDF8';
+    createOpt.style.fontWeight = '600';
+    nextSceneSelect.appendChild(createOpt);
     
     if (sceneIds.includes(currentNextVal)) nextSceneSelect.value = currentNextVal;
-    else nextSceneSelect.value = "";
 
-    // update each choice row's select dropdown with "Create New" option
-    document.querySelectorAll(".choice-card select").forEach((selectElem) => {
-      const currentChoiceVal = selectElem.value;
+    // Choice dropdowns
+    document.querySelectorAll('.choice-card select').forEach(selectElem => {
+      const currentVal = selectElem.value;
       selectElem.innerHTML = '<option value="">-- goto scene --</option>';
       sceneIds.forEach(id => {
-        const opt = document.createElement("option");
+        const opt = document.createElement('option');
         opt.value = id;
         opt.textContent = id;
         selectElem.appendChild(opt);
       });
-      const createOpt = document.createElement("option");
-      createOpt.value = "__CREATE_NEW__";
-      createOpt.textContent = "➕ Create new...";
-      createOpt.style.color = "#38BDF8";
-      createOpt.style.fontWeight = "bold";
-      selectElem.appendChild(createOpt);
-      
-      if (sceneIds.includes(currentChoiceVal)) selectElem.value = currentChoiceVal;
-      else selectElem.value = "";
+      const cOpt = document.createElement('option');
+      cOpt.value = '__CREATE_NEW__';
+      cOpt.textContent = '➕ Create new...';
+      cOpt.style.color = '#38BDF8';
+      cOpt.style.fontWeight = '600';
+      selectElem.appendChild(cOpt);
+      if (sceneIds.includes(currentVal)) selectElem.value = currentVal;
     });
   }
 
-  // Quick create target scene
+  // ============================================================
+  // QUICK CREATE TARGET SCENE (for continue)
+  // ============================================================
   window.quickCreateTargetScene = function() {
-    const newId = prompt("Enter a unique ID for the new scene:", "scene_" + (Object.keys(scenesDatabase).length + 1));
+    const newId = prompt('Enter a unique ID for the new scene:', 'scene_' + (Object.keys(scenesDatabase).length + 1));
     if (!newId) return;
-    if (newId.trim() === "") {
-      alert("Scene ID cannot be empty.");
-      return;
-    }
-    if (/[^a-zA-Z0-9_\-]/.test(newId)) {
-      alert("Scene ID can only contain letters, numbers, underscores or hyphens.");
+    if (!newId.trim() || /[^a-zA-Z0-9_\-]/.test(newId)) {
+      showToast('Invalid scene ID. Use letters, numbers, underscores, hyphens.', 'error');
       return;
     }
     if (scenesDatabase[newId]) {
-      alert(`Scene "${newId}" already exists!`);
+      showToast(`Scene "${newId}" already exists!`, 'error');
       return;
     }
-    
-    // Create a basic scene
-    const newScene = {
+    scenesDatabase[newId] = {
       id: newId,
-      speaker: "New Character",
-      dialogue: "New scene created. Edit this dialogue.",
+      speaker: 'New Character',
+      dialogue: 'New scene created. Edit this dialogue.',
       hasTapToContinue: true,
-      nextSceneId: "",
+      nextSceneId: '',
       timerDuration: 0
     };
-    scenesDatabase[newId] = newScene;
     renderSceneLibrary();
     refreshAllDropdowns();
-    
-    // Select the newly created scene in the dropdown
     setTimeout(() => {
       if (nextSceneSelect.querySelector(`option[value="${newId}"]`)) {
         nextSceneSelect.value = newId;
       }
     }, 50);
-    
-    alert(`✅ Scene "${newId}" created and ready to use! You can edit it later.`);
+    showToast(`✅ Scene "${newId}" created and ready!`, 'success');
+    updateNavStats();
   };
 
-  // Add new choice field with quick create support
-  window.addChoiceField = function(choiceText = "", targetId = "") {
-    const choiceDiv = document.createElement("div");
-    choiceDiv.className = "choice-card";
-    const uniqueId = "choice_" + Date.now() + "_" + Math.random();
-    choiceDiv.setAttribute("data-id", uniqueId);
-    choiceDiv.innerHTML = `
+  // ============================================================
+  // ADD CHOICE FIELD
+  // ============================================================
+  window.addChoiceField = function(choiceText = '', targetId = '') {
+    const card = document.createElement('div');
+    card.className = 'choice-card';
+    card.innerHTML = `
       <div class="choice-row">
-        <input type="text" class="choice-text" placeholder="Choice text (e.g., 'Fight the dragon')" value="${escapeHtml(choiceText)}">
-        <select class="choice-target"></select>
+        <input type="text" class="form-control choice-text" placeholder="Choice text (e.g., 'Fight the dragon')" value="${escapeHtml(choiceText)}">
+        <select class="form-control choice-target"></select>
       </div>
       <div class="choice-actions">
-        <button class="btn-icon-sm" onclick="removeChoiceItem(this)"><i class="fas fa-trash-alt"></i> Remove choice</button>
-        <button class="quick-create-btn" onclick="quickCreateFromChoice(this)" style="font-size:0.7rem; margin-left:auto;">
-          <i class="fas fa-plus-circle"></i> Create target
-        </button>
+        <button class="btn-icon create-target" onclick="quickCreateFromChoice(this)"><i class="fas fa-plus-circle"></i> Create target</button>
+        <button class="btn-icon" onclick="removeChoiceItem(this)"><i class="fas fa-trash-alt"></i> Remove</button>
       </div>
     `;
-    choicesContainer.appendChild(choiceDiv);
+    choicesContainer.appendChild(card);
     
-    // Populate the select inside this new choice
+    const targetSelect = card.querySelector('.choice-target');
     const sceneIds = Object.keys(scenesDatabase);
-    const targetSelect = choiceDiv.querySelector(".choice-target");
     targetSelect.innerHTML = '<option value="">-- choose next scene --</option>';
     sceneIds.forEach(id => {
-      const opt = document.createElement("option");
+      const opt = document.createElement('option');
       opt.value = id;
       opt.textContent = id;
       targetSelect.appendChild(opt);
     });
-    const createOpt = document.createElement("option");
-    createOpt.value = "__CREATE_NEW__";
-    createOpt.textContent = "➕ Create new...";
-    createOpt.style.color = "#38BDF8";
-    createOpt.style.fontWeight = "bold";
-    targetSelect.appendChild(createOpt);
-    
+    const cOpt = document.createElement('option');
+    cOpt.value = '__CREATE_NEW__';
+    cOpt.textContent = '➕ Create new...';
+    cOpt.style.color = '#38BDF8';
+    cOpt.style.fontWeight = '600';
+    targetSelect.appendChild(cOpt);
     if (targetId && sceneIds.includes(targetId)) targetSelect.value = targetId;
     refreshAllDropdowns();
   };
 
-  // Quick create from choice dropdown
+  // ============================================================
+  // QUICK CREATE FROM CHOICE
+  // ============================================================
   window.quickCreateFromChoice = function(btn) {
-    const card = btn.closest(".choice-card");
-    const selectElem = card.querySelector(".choice-target");
-    const newId = prompt("Enter a unique ID for the new target scene:", "scene_" + (Object.keys(scenesDatabase).length + 1));
+    const card = btn.closest('.choice-card');
+    const selectElem = card.querySelector('.choice-target');
+    const newId = prompt('Enter a unique ID for the new target scene:', 'scene_' + (Object.keys(scenesDatabase).length + 1));
     if (!newId) return;
-    if (newId.trim() === "") {
-      alert("Scene ID cannot be empty.");
-      return;
-    }
-    if (/[^a-zA-Z0-9_\-]/.test(newId)) {
-      alert("Scene ID can only contain letters, numbers, underscores or hyphens.");
+    if (!newId.trim() || /[^a-zA-Z0-9_\-]/.test(newId)) {
+      showToast('Invalid scene ID.', 'error');
       return;
     }
     if (scenesDatabase[newId]) {
-      alert(`Scene "${newId}" already exists!`);
+      showToast(`Scene "${newId}" already exists!`, 'error');
       return;
     }
-    
-    const newScene = {
+    scenesDatabase[newId] = {
       id: newId,
-      speaker: "New Character",
-      dialogue: "New scene created from choice. Edit this dialogue.",
+      speaker: 'New Character',
+      dialogue: 'New scene created from choice. Edit this dialogue.',
       hasTapToContinue: true,
-      nextSceneId: "",
+      nextSceneId: '',
       timerDuration: 0
     };
-    scenesDatabase[newId] = newScene;
     renderSceneLibrary();
     refreshAllDropdowns();
-    
-    // Set the select to the new scene
     setTimeout(() => {
       if (selectElem.querySelector(`option[value="${newId}"]`)) {
         selectElem.value = newId;
       }
     }, 50);
-    
-    alert(`✅ Scene "${newId}" created and linked to this choice!`);
+    showToast(`✅ Scene "${newId}" created and linked!`, 'success');
+    updateNavStats();
   };
 
   window.removeChoiceItem = function(btn) {
-    const card = btn.closest(".choice-card");
+    const card = btn.closest('.choice-card');
     if (card) card.remove();
   };
 
-  function escapeHtml(str) { 
-    if(!str) return ''; 
-    return str.replace(/[&<>]/g, function(m){
-      if(m==='&') return '&amp;'; 
-      if(m==='<') return '&lt;'; 
-      if(m==='>') return '&gt;'; 
-      return m;
-    });
+  function escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/[&<>]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' })[m] || m);
   }
 
-  // Save scene logic with special handling for "__CREATE_NEW__"
-  window.saveSceneLogic = function() {
+  // ============================================================
+  // SAVE SCENE LOGIC
+  // ============================================================
+  window.saveSceneLogic = function(silent = false) {
     const id = sceneIdInput.value.trim();
     if (!id) {
-      alert("❌ Scene ID is required. Use unique identifier like 'cave_entrance'");
-      return;
+      if (!silent) showToast('❌ Scene ID is required', 'error');
+      return false;
     }
     if (/[^a-zA-Z0-9_\-]/.test(id)) {
-      alert("⚠️ Scene ID can only contain letters, numbers, underscores or hyphens.");
-      return;
+      if (!silent) showToast('⚠️ Invalid Scene ID', 'error');
+      return false;
     }
-    const speaker = speakerInput.value.trim() || "Narrator";
+    const speaker = speakerInput.value.trim() || 'Narrator';
     const dialogue = dialogueInput.value.trim();
     if (!dialogue) {
-      alert("📖 Please add some dialogue or description for the scene.");
-      return;
+      if (!silent) showToast('📖 Please add dialogue', 'error');
+      return false;
     }
     const type = typeSelect.value;
     const timerVal = parseInt(timerInput.value) || 0;
-    
-    let sceneObj = {
-      id: id,
-      speaker: speaker,
-      dialogue: dialogue,
-      media: "",
-      mediaType: "image"
-    };
+
+    let sceneObj = { id, speaker, dialogue, media: '', mediaType: 'image' };
     if (timerVal > 0) sceneObj.timerDuration = timerVal;
 
-    if (type === "continue") {
+    if (type === 'continue') {
       let nextSceneVal = nextSceneSelect.value;
-      
-      // Handle "Create New" option
-      if (nextSceneVal === "__CREATE_NEW__") {
-        const newId = prompt("Enter a unique ID for the new target scene:", "scene_" + (Object.keys(scenesDatabase).length + 1));
-        if (!newId) return;
-        if (newId.trim() === "") {
-          alert("Scene ID cannot be empty.");
-          return;
-        }
-        if (/[^a-zA-Z0-9_\-]/.test(newId)) {
-          alert("Scene ID can only contain letters, numbers, underscores or hyphens.");
-          return;
+      if (nextSceneVal === '__CREATE_NEW__') {
+        const newId = prompt('Enter ID for new scene:', 'scene_' + (Object.keys(scenesDatabase).length + 1));
+        if (!newId) return false;
+        if (!newId.trim() || /[^a-zA-Z0-9_\-]/.test(newId)) {
+          showToast('Invalid scene ID.', 'error');
+          return false;
         }
         if (scenesDatabase[newId]) {
-          alert(`Scene "${newId}" already exists!`);
-          return;
+          showToast(`Scene "${newId}" already exists!`, 'error');
+          return false;
         }
-        
-        // Create the new scene
-        const newScene = {
+        scenesDatabase[newId] = {
           id: newId,
-          speaker: "New Character",
-          dialogue: "New scene created. Edit this dialogue.",
+          speaker: 'New Character',
+          dialogue: 'New scene created. Edit this dialogue.',
           hasTapToContinue: true,
-          nextSceneId: "",
+          nextSceneId: '',
           timerDuration: 0
         };
-        scenesDatabase[newId] = newScene;
         nextSceneVal = newId;
         renderSceneLibrary();
         refreshAllDropdowns();
-        alert(`✅ New scene "${newId}" created and linked!`);
+        showToast(`✅ New scene "${newId}" created!`, 'success');
       }
-      
-      if (!nextSceneVal || nextSceneVal === "") {
-        alert("⚠️ For 'Continue' type, you must select a Next Scene or create a new one.");
-        return;
+      if (!nextSceneVal || nextSceneVal === '') {
+        if (!silent) showToast('⚠️ Please select a Next Scene or create one', 'error');
+        return false;
       }
-      
       sceneObj.hasTapToContinue = true;
       sceneObj.nextSceneId = nextSceneVal;
       delete sceneObj.choices;
-    } 
-    else {  // choice mode
-      const choiceCards = document.querySelectorAll("#choices .choice-card");
+    } else {
+      const choiceCards = document.querySelectorAll('#choices .choice-card');
       if (choiceCards.length === 0) {
-        alert("❌ Branching mode requires at least one choice. Add a choice or switch to 'Continue' mode.");
-        return;
+        if (!silent) showToast('❌ Add at least one choice or switch to Continue mode', 'error');
+        return false;
       }
       let choicesArray = [];
       let valid = true;
-      let needsRefresh = false;
-      
       choiceCards.forEach(card => {
-        const choiceTextElem = card.querySelector(".choice-text");
-        const choiceTargetElem = card.querySelector(".choice-target");
-        const choiceText = choiceTextElem ? choiceTextElem.value.trim() : "";
-        let nextId = choiceTargetElem ? choiceTargetElem.value : "";
-        
-        // Handle "Create New" option for choices
-        if (nextId === "__CREATE_NEW__") {
-          const newId = prompt("Enter a unique ID for the new target scene:", "scene_" + (Object.keys(scenesDatabase).length + 1));
-          if (newId && newId.trim() !== "" && !/[^a-zA-Z0-9_\-]/.test(newId) && !scenesDatabase[newId]) {
-            const newScene = {
+        const textElem = card.querySelector('.choice-text');
+        const targetElem = card.querySelector('.choice-target');
+        let text = textElem ? textElem.value.trim() : '';
+        let nextId = targetElem ? targetElem.value : '';
+
+        if (nextId === '__CREATE_NEW__') {
+          const newId = prompt('Enter ID for new target scene:', 'scene_' + (Object.keys(scenesDatabase).length + 1));
+          if (newId && newId.trim() && !/[^a-zA-Z0-9_\-]/.test(newId) && !scenesDatabase[newId]) {
+            scenesDatabase[newId] = {
               id: newId,
-              speaker: "New Character",
-              dialogue: "New scene created from choice. Edit this dialogue.",
+              speaker: 'New Character',
+              dialogue: 'New scene from choice. Edit this.',
               hasTapToContinue: true,
-              nextSceneId: "",
+              nextSceneId: '',
               timerDuration: 0
             };
-            scenesDatabase[newId] = newScene;
             nextId = newId;
-            needsRefresh = true;
+            renderSceneLibrary();
+            refreshAllDropdowns();
+            showToast(`✅ Scene "${newId}" created!`, 'success');
           } else if (newId && scenesDatabase[newId]) {
             nextId = newId;
           } else {
-            alert(`Invalid or duplicate scene ID: "${newId}"`);
             valid = false;
           }
         }
-        
-        if (!choiceText) {
-          alert("⚠️ Every choice must have visible text.");
-          valid = false;
-        }
-        if (!nextId || nextId === "") {
-          alert(`⚠️ Choice "${choiceText || '(empty)'}" must have a target scene.`);
-          valid = false;
-        }
-        if (choiceText && nextId && nextId !== "") {
-          choicesArray.push({ text: choiceText, nextSceneId: nextId });
+        if (!text) { valid = false; if (!silent) showToast('⚠️ Choice text required', 'error'); }
+        if (!nextId || nextId === '') { valid = false; if (!silent) showToast('⚠️ Choice target required', 'error'); }
+        if (text && nextId && nextId !== '') {
+          choicesArray.push({ text, nextSceneId: nextId });
         }
       });
-      
-      if (!valid) return;
+      if (!valid) return false;
       if (choicesArray.length === 0) {
-        alert("At least one valid choice required.");
-        return;
-      }
-      if (needsRefresh) {
-        renderSceneLibrary();
-        refreshAllDropdowns();
+        if (!silent) showToast('❌ At least one valid choice required', 'error');
+        return false;
       }
       sceneObj.choices = choicesArray;
       delete sceneObj.hasTapToContinue;
       delete sceneObj.nextSceneId;
     }
 
-    // Save/overwrite
     scenesDatabase[id] = sceneObj;
     renderSceneLibrary();
     refreshAllDropdowns();
-    clearFormFields();
-    alert(`✅ Scene "${id}" saved successfully!`);
+    updateNavStats();
+    if (!silent) {
+      showToast(`✅ Scene "${id}" saved successfully!`, 'success');
+      clearFormFields();
+    }
+    return true;
   };
 
-  // Render all scenes in right panel
+  // ============================================================
+  // RENDER SCENE LIBRARY
+  // ============================================================
   function renderSceneLibrary() {
     const ids = Object.keys(scenesDatabase);
-    document.getElementById("sceneCountBadge").innerText = ids.length + (ids.length === 1 ? " scene" : " scenes");
-    if (ids.length === 0) {
-      sceneListDiv.innerHTML = `<div class="empty-library"><i class="fas fa-folder-open"></i> No scenes yet. Create your first scene!<br><small>Use left panel → fill form → Save Scene</small></div>`;
+    const count = ids.length;
+    sceneCountBadge.innerHTML = `<i class="fas fa-layer-group"></i> ${count} scene${count !== 1 ? 's' : ''}`;
+    updateNavStats();
+
+    if (count === 0) {
+      sceneListDiv.innerHTML = `
+        <div class="empty-library">
+          <i class="fas fa-folder-open"></i>
+          <p>No scenes created yet</p>
+          <small>Use the editor on the left to craft your first story scene</small>
+        </div>
+      `;
       return;
     }
-    let html = "";
+
+    let html = '';
     ids.forEach(id => {
       const s = scenesDatabase[id];
-      const typeLabel = s.choices ? `🎲 ${s.choices.length} choices` : "➡️ Continue → " + (s.nextSceneId || "none");
-      const previewDialogue = s.dialogue.length > 85 ? s.dialogue.slice(0, 82) + "..." : s.dialogue;
+      const typeLabel = s.choices ? `🎲 ${s.choices.length} choice${s.choices.length !== 1 ? 's' : ''}` : `➡️ Continue → ${s.nextSceneId || '?'}`;
+      const preview = s.dialogue.length > 90 ? s.dialogue.slice(0, 87) + '...' : s.dialogue;
       html += `
-        <div class="scene-card">
+        <div class="scene-card" data-id="${escapeHtml(id)}">
           <div class="scene-header">
-            <span class="scene-id"><i class="fas fa-hashtag"></i> ${escapeHtml(s.id)}</span>
-            <span style="font-size:0.7rem; background:#1E1F2E; padding:2px 8px; border-radius:20px;">${typeLabel}</span>
+            <span class="scene-id-badge"><i class="fas fa-hashtag"></i> ${escapeHtml(id)}</span>
+            <span class="scene-type-tag">${typeLabel}</span>
           </div>
-          <div class="scene-dialogue"><i class="fas fa-quote-left" style="opacity:0.6; font-size:0.7rem;"></i> ${escapeHtml(previewDialogue)}</div>
-          <div class="scene-meta"><i class="fas fa-user"></i> ${escapeHtml(s.speaker)} ${s.timerDuration ? `⏱️ ${s.timerDuration}s` : ''}</div>
+          <div class="scene-dialogue"><i class="fas fa-quote-left"></i> ${escapeHtml(preview)}</div>
+          <div class="scene-meta">
+            <span><i class="fas fa-user"></i> ${escapeHtml(s.speaker || 'Narrator')}</span>
+            ${s.timerDuration ? `<span><i class="fas fa-clock"></i> ${s.timerDuration}s</span>` : ''}
+            ${s.choices ? `<span><i class="fas fa-arrow-branch"></i> ${s.choices.length} branches</span>` : ''}
+          </div>
           <div class="card-actions">
-            <button onclick="editSceneById('${escapeHtml(s.id)}')"><i class="fas fa-pen"></i> Edit</button>
-            <button class="btn-danger" onclick="deleteSceneById('${escapeHtml(s.id)}')"><i class="fas fa-trash"></i> Delete</button>
+            <button class="btn btn-secondary btn-xs" onclick="editSceneById('${escapeHtml(id)}')"><i class="fas fa-pen"></i> Edit</button>
+            <button class="btn btn-danger btn-xs" onclick="deleteSceneById('${escapeHtml(id)}')"><i class="fas fa-trash"></i> Delete</button>
           </div>
         </div>
       `;
@@ -857,152 +1535,215 @@
     sceneListDiv.innerHTML = html;
   }
 
+  // ============================================================
+  // FILTER SCENES
+  // ============================================================
+  function filterScenes() {
+    const query = document.getElementById('searchScenes').value.toLowerCase().trim();
+    document.querySelectorAll('.scene-card').forEach(card => {
+      const id = card.dataset.id?.toLowerCase() || '';
+      const text = card.textContent?.toLowerCase() || '';
+      card.style.display = (id.includes(query) || text.includes(query)) ? '' : 'none';
+    });
+  }
+
+  // ============================================================
+  // UPDATE NAV STATS
+  // ============================================================
+  function updateNavStats() {
+    const count = Object.keys(scenesDatabase).length;
+    navSceneCount.textContent = count;
+    let totalChoices = 0;
+    Object.values(scenesDatabase).forEach(s => {
+      if (s.choices) totalChoices += s.choices.length;
+    });
+    navChoiceCount.textContent = totalChoices;
+  }
+
+  // ============================================================
+  // EDIT / DELETE SCENES
+  // ============================================================
   window.editSceneById = function(id) {
     const scene = scenesDatabase[id];
     if (!scene) return;
     sceneIdInput.value = scene.id;
-    speakerInput.value = scene.speaker || "";
-    dialogueInput.value = scene.dialogue || "";
+    speakerInput.value = scene.speaker || '';
+    dialogueInput.value = scene.dialogue || '';
     timerInput.value = scene.timerDuration || 0;
-    choicesContainer.innerHTML = "";
+    choicesContainer.innerHTML = '';
     if (scene.choices && scene.choices.length > 0) {
-      typeSelect.value = "choice";
-      scene.choices.forEach(ch => {
-        addChoiceField(ch.text, ch.nextSceneId);
-      });
+      typeSelect.value = 'choice';
+      scene.choices.forEach(ch => addChoiceField(ch.text, ch.nextSceneId));
     } else {
-      typeSelect.value = "continue";
-      if (scene.nextSceneId) {
-        setTimeout(() => {
-          if (nextSceneSelect.querySelector(`option[value="${scene.nextSceneId}"]`)) 
-            nextSceneSelect.value = scene.nextSceneId;
-        }, 20);
-      } else {
-        nextSceneSelect.value = "";
-      }
+      typeSelect.value = 'continue';
+      setTimeout(() => {
+        if (scene.nextSceneId && nextSceneSelect.querySelector(`option[value="${scene.nextSceneId}"]`)) {
+          nextSceneSelect.value = scene.nextSceneId;
+        }
+      }, 20);
     }
     toggleContinueField();
     refreshAllDropdowns();
     if (!scene.choices && scene.nextSceneId) {
       setTimeout(() => {
-        if (nextSceneSelect.querySelector(`option[value="${scene.nextSceneId}"]`))
+        if (nextSceneSelect.querySelector(`option[value="${scene.nextSceneId}"]`)) {
           nextSceneSelect.value = scene.nextSceneId;
+        }
       }, 50);
     }
+    showToast(`📝 Editing scene "${id}"`, 'info');
   };
 
   window.deleteSceneById = function(id) {
-    if (confirm(`🗑️ Permanently delete scene "${id}"? This may affect references in other scenes.`)) {
+    if (confirm(`🗑️ Permanently delete scene "${id}"?`)) {
       delete scenesDatabase[id];
       renderSceneLibrary();
       refreshAllDropdowns();
+      updateNavStats();
       if (sceneIdInput.value === id) clearFormFields();
+      showToast(`🗑️ Scene "${id}" deleted`, 'info');
     }
   };
 
   window.clearAllScenes = function() {
-    if (confirm("⚠️ Delete ALL scenes? This cannot be undone!")) {
+    if (confirm('⚠️ Delete ALL scenes? This cannot be undone!')) {
       scenesDatabase = {};
       renderSceneLibrary();
       refreshAllDropdowns();
       clearFormFields();
-      alert("All scenes cleared.");
+      updateNavStats();
+      showToast('All scenes cleared', 'info');
     }
   };
 
   function clearFormFields() {
-    sceneIdInput.value = "";
-    speakerInput.value = "";
-    dialogueInput.value = "";
-    timerInput.value = "0";
-    choicesContainer.innerHTML = "";
-    typeSelect.value = "choice";
+    sceneIdInput.value = '';
+    speakerInput.value = '';
+    dialogueInput.value = '';
+    timerInput.value = '0';
+    choicesContainer.innerHTML = '';
+    typeSelect.value = 'choice';
     toggleContinueField();
-    nextSceneSelect.value = "";
+    nextSceneSelect.value = '';
     refreshAllDropdowns();
   }
 
-  // EXPORT JSON
+  // ============================================================
+  // EXPORT / IMPORT
+  // ============================================================
   window.exportFullData = function() {
     if (Object.keys(scenesDatabase).length === 0) {
-      alert("No scenes to export. Create some story first.");
+      showToast('No scenes to export', 'error');
       return;
     }
     const dataStr = JSON.stringify(scenesDatabase, null, 2);
     exportBoxDiv.innerHTML = `
       <div class="export-preview">
-        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;"><strong><i class="fas fa-code"></i> Story JSON</strong> <button onclick="copyExportToClipboard()"><i class="fas fa-copy"></i> Copy</button></div>
-        <textarea rows="6" readonly style="width:100%; font-family: monospace;">${escapeHtml(dataStr)}</textarea>
-        <div class="tooltip-note">✅ Ready for game engine: compatible with standard story format.</div>
+        <div class="export-header">
+          <strong><i class="fas fa-code"></i> Story JSON</strong>
+          <button class="btn btn-primary btn-xs" onclick="copyExportToClipboard()"><i class="fas fa-copy"></i> Copy</button>
+        </div>
+        <textarea rows="6" readonly>${escapeHtml(dataStr)}</textarea>
+        <div style="font-size:0.6rem; color:var(--text-muted); margin-top:6px;">
+          <i class="fas fa-check-circle" style="color:var(--accent-green);"></i> Ready for game engine integration
+        </div>
       </div>
     `;
+    showToast('📤 JSON exported successfully', 'success');
   };
+
   window.copyExportToClipboard = function() {
-    const txtArea = document.querySelector("#exportBox textarea");
-    if (txtArea) {
-      txtArea.select();
-      navigator.clipboard.writeText(txtArea.value).then(() => alert("📋 JSON copied to clipboard!")).catch(() => alert("Manual copy failed"));
+    const txt = document.querySelector('#exportBox textarea');
+    if (txt) {
+      navigator.clipboard.writeText(txt.value).then(
+        () => showToast('📋 JSON copied to clipboard!', 'success'),
+        () => showToast('Copy failed', 'error')
+      );
     }
   };
 
-  // IMPORT from HTML (gameScenes object) or raw JSON
   window.triggerImport = function() {
-    document.getElementById("fileInput").click();
+    document.getElementById('fileInput').click();
   };
-  document.getElementById("fileInput").addEventListener("change", function(e) {
+
+  document.getElementById('fileInput').addEventListener('change', function(e) {
     const file = e.target.files[0];
     if (!file) return;
     const reader = new FileReader();
     reader.onload = function(ev) {
-      const content = ev.target.result;
       try {
+        const content = ev.target.result;
         let importedData = null;
-        if (file.name.endsWith(".json")) {
+        if (file.name.endsWith('.json')) {
           importedData = JSON.parse(content);
         } else {
           const match = content.match(/const\s+gameScenes\s*=\s*(\{[\s\S]*?\});/);
-          if (match && match[1]) {
-            const objCandidate = new Function("return " + match[1])();
-            importedData = objCandidate;
-          } else {
-            const fallbackMatch = content.match(/gameScenes\s*=\s*(\{[\s\S]*?\});/);
-            if (fallbackMatch) importedData = new Function("return " + fallbackMatch[1])();
-            else throw new Error("No valid scenes object found.");
+          if (match && match[1]) importedData = new Function('return ' + match[1])();
+          else {
+            const fallback = content.match(/gameScenes\s*=\s*(\{[\s\S]*?\});/);
+            if (fallback) importedData = new Function('return ' + fallback[1])();
+            else throw new Error('No valid scenes found');
           }
         }
-        if (importedData && typeof importedData === "object" && !Array.isArray(importedData)) {
+        if (importedData && typeof importedData === 'object' && !Array.isArray(importedData)) {
           scenesDatabase = importedData;
           renderSceneLibrary();
           refreshAllDropdowns();
-          alert(`✨ Imported ${Object.keys(scenesDatabase).length} scenes successfully!`);
-          exportBoxDiv.innerHTML = "";
-        } else throw new Error("Invalid story format");
+          updateNavStats();
+          exportBoxDiv.innerHTML = '';
+          showToast(`✨ Imported ${Object.keys(scenesDatabase).length} scenes!`, 'success');
+        } else throw new Error('Invalid format');
       } catch (err) {
-        console.error(err);
-        alert("❌ Import failed. Ensure file contains a valid story object (gameScenes or JSON).");
+        showToast('❌ Import failed: ' + err.message, 'error');
       }
-      document.getElementById("fileInput").value = "";
+      document.getElementById('fileInput').value = '';
     };
     reader.readAsText(file);
   });
 
-  // Initialize with demo data
-  function initDemoHint() {
+  // ============================================================
+  // INIT DEMO
+  // ============================================================
+  function initDemo() {
     if (Object.keys(scenesDatabase).length === 0) {
       scenesDatabase = {
-        "start": { id: "start", speaker: "Guide", dialogue: "Welcome to Narrative Forge! This is a demo scene. Create your own story.", hasTapToContinue: true, nextSceneId: "forest", timerDuration: 0 },
-        "forest": { id: "forest", speaker: "Narrator", dialogue: "You step into the enchanted woods. Two paths ahead.", choices: [{ text: "Take the left path", nextSceneId: "cave" }, { text: "Go right towards the village", nextSceneId: "village" }] },
-        "cave": { id: "cave", speaker: "Echo", dialogue: "Dark cave. A mysterious glow...", hasTapToContinue: true, nextSceneId: "start" },
-        "village": { id: "village", speaker: "Elder", dialogue: "Peaceful village. You rest.", hasTapToContinue: true, nextSceneId: "start" }
+        'start': { id: 'start', speaker: 'Guide', dialogue: 'Welcome to Narrative Forge! This is a demo scene. Create your own story.', hasTapToContinue: true, nextSceneId: 'forest', timerDuration: 0 },
+        'forest': { id: 'forest', speaker: 'Narrator', dialogue: 'You step into the enchanted woods. Two paths ahead.', choices: [{ text: 'Take the left path', nextSceneId: 'cave' }, { text: 'Go right towards the village', nextSceneId: 'village' }] },
+        'cave': { id: 'cave', speaker: 'Echo', dialogue: 'Dark cave. A mysterious glow...', hasTapToContinue: true, nextSceneId: 'start' },
+        'village': { id: 'village', speaker: 'Elder', dialogue: 'Peaceful village. You rest.', hasTapToContinue: true, nextSceneId: 'start' }
       };
       renderSceneLibrary();
       refreshAllDropdowns();
+      updateNavStats();
     }
   }
-  initDemoHint();
-  window.clearFormFields = clearFormFields;
-  window.refreshAllDropdowns = refreshAllDropdowns;
-  window.saveSceneLogic = saveSceneLogic;
+  initDemo();
+
+  // ============================================================
+  // KEYBOARD SHORTCUTS
+  // ============================================================
+  document.addEventListener('keydown', function(e) {
+    // Ctrl+S = Save
+    if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+      e.preventDefault();
+      saveSceneLogic();
+    }
+    // Ctrl+Shift+A = Toggle autosave
+    if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'A') {
+      e.preventDefault();
+      toggleAutosave();
+    }
+  });
+
+  // ============================================================
+  // CLEANUP
+  // ============================================================
+  window.addEventListener('beforeunload', function() {
+    if (autosaveTimer) clearInterval(autosaveTimer);
+  });
+
+  console.log('🚀 Narrative Forge Pro loaded!');
+  console.log('📖 Shortcuts: Ctrl+S = Save, Ctrl+Shift+A = Toggle Autosave');
 </script>
 </body>
 </html>
