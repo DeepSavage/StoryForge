@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-  <title>✨ Narrative Forge Pro | Story Builder Suite</title>
+  <title>✨ Narrative Forge Pro | Node-Based Story Builder</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
@@ -11,7 +11,6 @@
        ROOT VARIABLES (Theme System)
     ============================================================ */
     :root {
-      /* Default Dark Theme */
       --bg-primary: #0A0F1C;
       --bg-secondary: #111827;
       --bg-card: #0F172A;
@@ -33,12 +32,15 @@
       --card-shadow: 0 4px 20px rgba(0,0,0,0.3);
       --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
       
-      /* Cursor effects */
-      --cursor-glow: rgba(56, 189, 248, 0.08);
-      --cursor-ring: rgba(56, 189, 248, 0.15);
+      /* Node colors */
+      --node-start: #10B981;
+      --node-choice: #3B82F6;
+      --node-continue: #8B5CF6;
+      --node-end: #EF4444;
+      --node-border: #1E293B;
     }
 
-    /* ===== THEME: Light Mode ===== */
+    /* ===== THEMES ===== */
     [data-theme="light"] {
       --bg-primary: #F1F5F9;
       --bg-secondary: #E2E8F0;
@@ -53,11 +55,9 @@
       --shadow-color: rgba(0, 0, 0, 0.08);
       --glow-color: rgba(59, 130, 246, 0.15);
       --card-shadow: 0 4px 20px rgba(0,0,0,0.06);
-      --cursor-glow: rgba(59, 130, 246, 0.05);
-      --cursor-ring: rgba(59, 130, 246, 0.08);
+      --node-border: #CBD5E1;
     }
 
-    /* ===== THEME: Ocean Blue ===== */
     [data-theme="ocean"] {
       --bg-primary: #0C1929;
       --bg-secondary: #0F2440;
@@ -72,17 +72,9 @@
       --accent-primary: #60A5FA;
       --accent-secondary: #3B82F6;
       --accent-gradient: linear-gradient(135deg, #3B82F6, #1D4ED8);
-      --accent-success: #34D399;
-      --accent-danger: #F87171;
-      --accent-warning: #FBBF24;
-      --shadow-color: rgba(59, 130, 246, 0.2);
-      --glow-color: rgba(96, 165, 250, 0.2);
-      --card-shadow: 0 4px 20px rgba(0,0,0,0.4);
-      --cursor-glow: rgba(96, 165, 250, 0.08);
-      --cursor-ring: rgba(96, 165, 250, 0.12);
+      --node-border: #1A3A5C;
     }
 
-    /* ===== THEME: Forest ===== */
     [data-theme="forest"] {
       --bg-primary: #0A1A0F;
       --bg-secondary: #0F2418;
@@ -97,17 +89,9 @@
       --accent-primary: #34D399;
       --accent-secondary: #10B981;
       --accent-gradient: linear-gradient(135deg, #10B981, #047857);
-      --accent-success: #34D399;
-      --accent-danger: #F87171;
-      --accent-warning: #FBBF24;
-      --shadow-color: rgba(16, 185, 129, 0.2);
-      --glow-color: rgba(52, 211, 153, 0.2);
-      --card-shadow: 0 4px 20px rgba(0,0,0,0.4);
-      --cursor-glow: rgba(52, 211, 153, 0.08);
-      --cursor-ring: rgba(52, 211, 153, 0.12);
+      --node-border: #1A3A28;
     }
 
-    /* ===== THEME: Sunset ===== */
     [data-theme="sunset"] {
       --bg-primary: #1A0C0C;
       --bg-secondary: #2D1515;
@@ -122,17 +106,9 @@
       --accent-primary: #F87171;
       --accent-secondary: #EF4444;
       --accent-gradient: linear-gradient(135deg, #EF4444, #DC2626);
-      --accent-success: #34D399;
-      --accent-danger: #F87171;
-      --accent-warning: #FBBF24;
-      --shadow-color: rgba(239, 68, 68, 0.2);
-      --glow-color: rgba(248, 113, 113, 0.2);
-      --card-shadow: 0 4px 20px rgba(0,0,0,0.4);
-      --cursor-glow: rgba(248, 113, 113, 0.08);
-      --cursor-ring: rgba(248, 113, 113, 0.12);
+      --node-border: #3D2020;
     }
 
-    /* ===== THEME: Purple Dream ===== */
     [data-theme="purple"] {
       --bg-primary: #0D0A1A;
       --bg-secondary: #1A1035;
@@ -147,14 +123,7 @@
       --accent-primary: #A78BFA;
       --accent-secondary: #8B5CF6;
       --accent-gradient: linear-gradient(135deg, #8B5CF6, #6D28D9);
-      --accent-success: #34D399;
-      --accent-danger: #F87171;
-      --accent-warning: #FBBF24;
-      --shadow-color: rgba(139, 92, 246, 0.2);
-      --glow-color: rgba(167, 139, 250, 0.2);
-      --card-shadow: 0 4px 20px rgba(0,0,0,0.4);
-      --cursor-glow: rgba(167, 139, 250, 0.08);
-      --cursor-ring: rgba(167, 139, 250, 0.12);
+      --node-border: #2A1A50;
     }
 
     /* ============================================================
@@ -175,82 +144,65 @@
       display: flex;
       flex-direction: column;
       transition: background 0.4s ease, color 0.3s ease;
-      cursor: default;
     }
 
     /* ============================================================
-       CURSOR GLOW EFFECT (ReactBits style)
+       CURSOR EFFECT - Cosmic Trail
     ============================================================ */
-    #cursorGlow {
+    #cursorTrail {
       position: fixed;
       pointer-events: none;
-      width: 300px;
-      height: 300px;
-      border-radius: 50%;
-      background: var(--cursor-glow);
-      transform: translate(-50%, -50%);
-      z-index: 9998;
-      transition: none;
-      will-change: transform;
-      filter: blur(40px);
-      opacity: 0.7;
-    }
-
-    #cursorRing {
-      position: fixed;
-      pointer-events: none;
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      border: 1.5px solid var(--cursor-ring);
-      transform: translate(-50%, -50%);
       z-index: 9999;
-      transition: width 0.2s, height 0.2s, border-color 0.3s;
-      will-change: transform;
-      backdrop-filter: blur(2px);
-      background: rgba(255,255,255,0.02);
-    }
-
-    #cursorRing.hover {
-      width: 48px;
-      height: 48px;
-      border-color: var(--accent-primary);
-      background: var(--cursor-glow);
-    }
-
-    #cursorRing.click {
-      width: 20px;
-      height: 20px;
-      border-color: var(--accent-primary);
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
       background: var(--accent-primary);
-      opacity: 0.3;
+      box-shadow: 0 0 20px var(--accent-primary), 0 0 60px var(--accent-primary), 0 0 100px var(--accent-primary);
+      transform: translate(-50%, -50%);
+      transition: width 0.15s, height 0.15s, background 0.3s;
+      opacity: 0.9;
+      will-change: transform;
     }
 
-    /* Hide cursor on touch devices */
-    @media (hover: none) {
-      #cursorGlow, #cursorRing {
-        display: none !important;
+    .trail-particle {
+      position: fixed;
+      pointer-events: none;
+      border-radius: 50%;
+      background: var(--accent-primary);
+      opacity: 0.6;
+      z-index: 9998;
+      transform: translate(-50%, -50%);
+      animation: trailFade 0.6s ease-out forwards;
+      will-change: transform, opacity;
+    }
+
+    @keyframes trailFade {
+      0% {
+        opacity: 0.6;
+        transform: translate(-50%, -50%) scale(1);
+      }
+      100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0);
       }
     }
 
-    /* ============================================================
-       SCROLLBAR
-    ============================================================ */
-    ::-webkit-scrollbar {
-      width: 5px;
-      height: 5px;
+    #cursorTrail.hover {
+      width: 12px;
+      height: 12px;
+      box-shadow: 0 0 30px var(--accent-primary), 0 0 80px var(--accent-primary), 0 0 120px var(--accent-primary);
     }
-    ::-webkit-scrollbar-track {
-      background: var(--bg-secondary);
-      border-radius: 10px;
+
+    #cursorTrail.click {
+      width: 3px;
+      height: 3px;
+      box-shadow: 0 0 40px var(--accent-primary), 0 0 100px var(--accent-primary);
     }
-    ::-webkit-scrollbar-thumb {
-      background: var(--border-color);
-      border-radius: 10px;
-      transition: var(--transition);
-    }
-    ::-webkit-scrollbar-thumb:hover {
-      background: var(--border-hover);
+
+    @media (hover: none) {
+      #cursorTrail, .trail-particle {
+        display: none !important;
+      }
     }
 
     /* ============================================================
@@ -341,10 +293,6 @@
       gap: 4px;
     }
 
-    .theme-selector .theme-label i {
-      font-size: 0.65rem;
-    }
-
     .theme-selector .current-theme-icon {
       font-size: 0.8rem;
     }
@@ -425,7 +373,6 @@
       opacity: 1;
     }
 
-    /* Auto-save Toggle */
     .autosave-toggle {
       display: flex;
       align-items: center;
@@ -448,10 +395,6 @@
       display: flex;
       align-items: center;
       gap: 6px;
-    }
-
-    .autosave-toggle .label i {
-      font-size: 0.7rem;
     }
 
     .toggle-switch {
@@ -544,13 +487,13 @@
        LEFT PANEL
     ============================================================ */
     .editor-panel {
-      width: 42%;
-      min-width: 380px;
+      width: 35%;
+      min-width: 320px;
       background: rgba(var(--bg-primary-rgb), 0.85);
       backdrop-filter: blur(12px);
       border-right: 1px solid var(--border-color);
       overflow-y: auto;
-      padding: 1.5rem 1.8rem;
+      padding: 1.2rem 1.5rem;
       transition: background 0.3s, border-color 0.3s;
     }
 
@@ -558,11 +501,11 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 1.25rem;
+      margin-bottom: 1rem;
     }
 
     .panel-header h2 {
-      font-size: 1rem;
+      font-size: 0.95rem;
       font-weight: 600;
       color: var(--text-primary);
       display: flex;
@@ -575,7 +518,7 @@
     }
 
     .panel-header .badge {
-      font-size: 0.6rem;
+      font-size: 0.55rem;
       background: rgba(var(--accent-primary-rgb), 0.12);
       padding: 3px 12px;
       border-radius: 20px;
@@ -583,17 +526,16 @@
       font-weight: 500;
     }
 
-    /* Info banner */
     .info-banner {
       background: linear-gradient(135deg, rgba(var(--accent-primary-rgb), 0.08), rgba(var(--accent-secondary-rgb), 0.05));
       border: 1px solid rgba(var(--accent-primary-rgb), 0.15);
       border-radius: 12px;
-      padding: 12px 16px;
-      margin-bottom: 1.5rem;
+      padding: 10px 14px;
+      margin-bottom: 1.2rem;
       display: flex;
       align-items: center;
-      gap: 12px;
-      font-size: 0.8rem;
+      gap: 10px;
+      font-size: 0.75rem;
       color: var(--text-secondary);
       line-height: 1.5;
       transition: var(--transition);
@@ -601,7 +543,7 @@
 
     .info-banner i {
       color: var(--accent-primary);
-      font-size: 1rem;
+      font-size: 0.9rem;
       flex-shrink: 0;
     }
 
@@ -609,9 +551,8 @@
       color: var(--text-primary);
     }
 
-    /* Form groups */
     .form-group {
-      margin-bottom: 1rem;
+      margin-bottom: 0.8rem;
     }
 
     .form-label {
@@ -619,21 +560,21 @@
       align-items: center;
       gap: 8px;
       font-weight: 500;
-      font-size: 0.78rem;
+      font-size: 0.72rem;
       color: var(--text-secondary);
-      margin-bottom: 5px;
+      margin-bottom: 4px;
       letter-spacing: 0.2px;
     }
 
     .form-label i {
-      width: 16px;
+      width: 14px;
       color: var(--accent-primary);
-      font-size: 0.7rem;
+      font-size: 0.65rem;
     }
 
     .form-label .required {
       color: var(--accent-danger);
-      font-size: 0.6rem;
+      font-size: 0.55rem;
     }
 
     .form-control {
@@ -641,9 +582,9 @@
       background: var(--bg-input);
       border: 1.5px solid var(--border-color);
       border-radius: 8px;
-      padding: 10px 14px;
+      padding: 8px 12px;
       font-family: 'Inter', monospace;
-      font-size: 0.85rem;
+      font-size: 0.8rem;
       color: var(--text-primary);
       transition: var(--transition);
     }
@@ -662,7 +603,7 @@
 
     textarea.form-control {
       resize: vertical;
-      min-height: 70px;
+      min-height: 60px;
       line-height: 1.5;
     }
 
@@ -675,24 +616,18 @@
       cursor: pointer;
     }
 
-    select.form-control option {
-      background: var(--bg-card);
-      color: var(--text-primary);
-    }
-
     .form-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 12px;
+      gap: 10px;
     }
 
-    /* Choices container */
     .choices-container {
       background: rgba(0, 0, 0, 0.2);
       border-radius: 12px;
-      padding: 10px;
+      padding: 8px;
       margin-top: 4px;
-      min-height: 40px;
+      min-height: 30px;
       border: 1px dashed var(--border-color);
       transition: var(--transition);
     }
@@ -700,8 +635,8 @@
     .choice-card {
       background: var(--bg-card);
       border-radius: 8px;
-      padding: 12px;
-      margin-bottom: 10px;
+      padding: 10px;
+      margin-bottom: 8px;
       border: 1px solid var(--border-color);
       transition: var(--transition);
     }
@@ -712,18 +647,17 @@
 
     .choice-card:hover {
       border-color: var(--border-hover);
-      transform: translateX(3px);
     }
 
     .choice-row {
       display: flex;
-      gap: 10px;
+      gap: 8px;
       flex-wrap: wrap;
     }
 
     .choice-row .form-control {
       flex: 1;
-      min-width: 120px;
+      min-width: 100px;
     }
 
     .choice-row .form-control:first-child {
@@ -732,8 +666,8 @@
 
     .choice-actions {
       display: flex;
-      gap: 8px;
-      margin-top: 10px;
+      gap: 6px;
+      margin-top: 8px;
       justify-content: flex-end;
     }
 
@@ -742,13 +676,13 @@
       border: none;
       color: var(--text-muted);
       cursor: pointer;
-      padding: 4px 10px;
+      padding: 3px 8px;
       border-radius: 20px;
-      font-size: 0.7rem;
+      font-size: 0.65rem;
       transition: var(--transition);
       display: inline-flex;
       align-items: center;
-      gap: 5px;
+      gap: 4px;
     }
 
     .btn-icon:hover {
@@ -765,39 +699,23 @@
       color: var(--accent-primary);
     }
 
-    /* Buttons */
     .btn {
       border: none;
       border-radius: 40px;
-      padding: 8px 20px;
+      padding: 6px 16px;
       font-weight: 500;
-      font-size: 0.8rem;
+      font-size: 0.75rem;
       color: var(--text-primary);
       cursor: pointer;
       transition: var(--transition);
       display: inline-flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
       font-family: 'Inter', sans-serif;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .btn::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: rgba(255,255,255,0.05);
-      opacity: 0;
-      transition: var(--transition);
-    }
-
-    .btn:hover::after {
-      opacity: 1;
     }
 
     .btn i {
-      font-size: 0.85rem;
+      font-size: 0.8rem;
     }
 
     .btn-primary {
@@ -841,54 +759,43 @@
       background: #B91C1C;
     }
 
-    .btn-warning {
-      background: #78350F;
-      color: white;
-    }
-
-    .btn-warning:hover {
-      background: #92400E;
-    }
-
     .btn-sm {
-      padding: 5px 14px;
-      font-size: 0.7rem;
+      padding: 4px 12px;
+      font-size: 0.65rem;
     }
 
     .btn-xs {
-      padding: 3px 10px;
-      font-size: 0.65rem;
+      padding: 2px 8px;
+      font-size: 0.6rem;
     }
 
     .action-bar {
       display: flex;
-      gap: 10px;
+      gap: 8px;
       flex-wrap: wrap;
-      margin: 12px 0 8px;
+      margin: 10px 0 6px;
     }
 
     hr {
       border: none;
       height: 1px;
       background: linear-gradient(90deg, transparent, var(--border-color), transparent);
-      margin: 1.25rem 0;
+      margin: 1rem 0;
       transition: var(--transition);
     }
 
-    /* Data management section */
     .data-actions {
       display: flex;
       flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 10px;
+      gap: 6px;
+      margin-top: 8px;
     }
 
-    /* Export preview */
     .export-preview {
       background: var(--bg-primary);
       border-radius: 12px;
-      margin-top: 14px;
-      padding: 14px;
+      margin-top: 12px;
+      padding: 12px;
       border: 1px solid var(--border-color);
       transition: var(--transition);
     }
@@ -897,14 +804,14 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
     }
 
     .export-preview .export-header strong {
-      font-size: 0.8rem;
+      font-size: 0.75rem;
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
       color: var(--text-secondary);
     }
 
@@ -913,221 +820,277 @@
       background: var(--bg-input);
       border: 1px solid var(--border-color);
       border-radius: 8px;
-      padding: 10px;
+      padding: 8px;
       color: var(--text-secondary);
       font-family: 'Fira Code', monospace;
-      font-size: 0.65rem;
-      min-height: 120px;
+      font-size: 0.6rem;
+      min-height: 80px;
       resize: vertical;
     }
 
     /* ============================================================
-       RIGHT PANEL
+       RIGHT PANEL - NODE MAP
     ============================================================ */
     .library-panel {
       flex: 1;
       background: var(--bg-primary);
-      overflow-y: auto;
-      padding: 1.5rem 2rem;
-      background-image: radial-gradient(var(--border-color) 1px, transparent 1px);
-      background-size: 32px 32px;
-      background-opacity: 0.05;
+      overflow: hidden;
+      position: relative;
       transition: background 0.3s;
     }
 
-    .library-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 12px;
-      margin-bottom: 1.25rem;
+    .node-map-container {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      overflow: hidden;
+      background: radial-gradient(circle at 50% 50%, var(--bg-secondary) 0%, var(--bg-primary) 100%);
     }
 
-    .library-header h2 {
-      font-size: 1.1rem;
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      gap: 10px;
+    /* SVG connections layer */
+    .connections-layer {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
     }
 
-    .library-header h2 i {
-      color: var(--accent-primary);
+    .connections-layer svg {
+      width: 100%;
+      height: 100%;
     }
 
-    .library-stats {
-      display: flex;
-      gap: 12px;
-      align-items: center;
+    .connection-line {
+      stroke-width: 2.5;
+      fill: none;
+      stroke-linecap: round;
+      opacity: 0.6;
+      transition: stroke 0.3s, opacity 0.3s;
     }
 
-    .library-stats .count {
-      background: var(--bg-secondary);
-      padding: 4px 14px;
-      border-radius: 40px;
-      font-size: 0.75rem;
-      font-weight: 500;
-      color: var(--text-secondary);
-      border: 1px solid var(--border-color);
-      transition: var(--transition);
+    .connection-line:hover {
+      opacity: 1;
+      stroke-width: 3.5;
     }
 
-    .library-stats .count i {
-      color: var(--accent-primary);
-      margin-right: 5px;
+    .connection-line.animate {
+      stroke-dasharray: 8 6;
+      animation: dashFlow 0.8s linear infinite;
     }
 
-    .search-box {
-      background: var(--bg-secondary);
-      border: 1px solid var(--border-color);
-      border-radius: 40px;
-      padding: 5px 14px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      transition: var(--transition);
+    @keyframes dashFlow {
+      to {
+        stroke-dashoffset: -14;
+      }
     }
 
-    .search-box:focus-within {
-      border-color: var(--border-hover);
-      box-shadow: 0 0 0 3px var(--glow-color);
+    /* Nodes container */
+    .nodes-layer {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 2;
+      padding: 40px;
     }
 
-    .search-box input {
-      background: transparent;
-      border: none;
-      color: var(--text-primary);
-      font-size: 0.78rem;
-      padding: 6px 0;
-      width: 140px;
-      font-family: 'Inter', sans-serif;
-    }
-
-    .search-box input:focus {
-      outline: none;
-    }
-
-    .search-box input::placeholder {
-      color: var(--text-muted);
-    }
-
-    .search-box i {
-      color: var(--text-muted);
-      font-size: 0.75rem;
-    }
-
-    /* Scene cards grid */
-    .scene-grid {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .scene-card {
+    .node-item {
+      position: absolute;
+      cursor: grab;
+      min-width: 140px;
+      max-width: 200px;
+      padding: 12px 16px;
       background: var(--bg-card);
+      border: 2px solid var(--node-border);
       border-radius: 12px;
-      padding: 16px 20px;
-      border: 1px solid var(--border-color);
-      transition: var(--transition);
-      cursor: default;
-    }
-
-    .scene-card:hover {
-      border-color: var(--border-hover);
-      transform: translateX(4px);
-      background: var(--bg-hover);
       box-shadow: var(--card-shadow);
+      transition: box-shadow 0.3s, transform 0.2s, border-color 0.3s;
+      user-select: none;
+      touch-action: none;
     }
 
-    .scene-card .scene-header {
+    .node-item:hover {
+      box-shadow: 0 8px 30px var(--shadow-color);
+      z-index: 10;
+    }
+
+    .node-item.dragging {
+      cursor: grabbing;
+      box-shadow: 0 12px 40px var(--shadow-color);
+      z-index: 20;
+      transform: scale(1.05);
+    }
+
+    .node-item .node-header {
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      flex-wrap: wrap;
       gap: 8px;
-      margin-bottom: 8px;
+      margin-bottom: 4px;
     }
 
-    .scene-card .scene-id-badge {
+    .node-item .node-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .node-item .node-dot.start { background: var(--node-start); box-shadow: 0 0 12px var(--node-start); }
+    .node-item .node-dot.choice { background: var(--node-choice); box-shadow: 0 0 12px var(--node-choice); }
+    .node-item .node-dot.continue { background: var(--node-continue); box-shadow: 0 0 12px var(--node-continue); }
+    .node-item .node-dot.end { background: var(--node-end); box-shadow: 0 0 12px var(--node-end); }
+
+    .node-item .node-id {
       font-weight: 600;
-      font-size: 0.85rem;
-      background: rgba(var(--accent-primary-rgb), 0.08);
-      padding: 2px 14px;
-      border-radius: 40px;
-      font-family: monospace;
-      color: var(--accent-primary);
-      border: 1px solid rgba(var(--accent-primary-rgb), 0.1);
+      font-size: 0.75rem;
+      color: var(--text-primary);
+      flex: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
-    .scene-card .scene-type-tag {
-      font-size: 0.6rem;
+    .node-item .node-preview {
+      font-size: 0.65rem;
+      color: var(--text-secondary);
+      margin-top: 2px;
+      line-height: 1.3;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .node-item .node-actions {
+      display: flex;
+      gap: 4px;
+      margin-top: 6px;
+      justify-content: flex-end;
+    }
+
+    .node-item .node-actions button {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 0.55rem;
+      padding: 2px 6px;
+      border-radius: 4px;
+      transition: var(--transition);
+    }
+
+    .node-item .node-actions button:hover {
+      background: var(--bg-hover);
+      color: var(--text-primary);
+    }
+
+    .node-item .node-actions .delete-btn:hover {
+      color: var(--accent-danger);
+      background: rgba(var(--accent-danger-rgb), 0.1);
+    }
+
+    .node-item .node-badge {
+      font-size: 0.5rem;
+      padding: 1px 8px;
+      border-radius: 20px;
       background: var(--bg-secondary);
-      padding: 2px 12px;
-      border-radius: 40px;
       color: var(--text-muted);
       border: 1px solid var(--border-color);
+      margin-top: 4px;
+      display: inline-block;
     }
 
-    .scene-card .scene-dialogue {
-      font-size: 0.82rem;
-      color: var(--text-secondary);
-      line-height: 1.5;
-      margin: 6px 0 10px;
-      padding-left: 12px;
-      border-left: 2px solid rgba(var(--accent-primary-rgb), 0.2);
+    .node-item.has-connections {
+      border-color: var(--accent-primary);
     }
 
-    .scene-card .scene-dialogue i {
-      color: var(--text-muted);
-      font-size: 0.6rem;
-      margin-right: 4px;
+    .node-item .connection-dot {
+      position: absolute;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: var(--accent-primary);
+      border: 2px solid var(--bg-card);
+      box-shadow: 0 0 12px var(--glow-color);
+      opacity: 0;
+      transition: opacity 0.3s;
     }
 
-    .scene-card .scene-meta {
+    .node-item:hover .connection-dot {
+      opacity: 0.8;
+    }
+
+    .node-item .connection-dot.top { top: -7px; left: 50%; transform: translateX(-50%); }
+    .node-item .connection-dot.bottom { bottom: -7px; left: 50%; transform: translateX(-50%); }
+    .node-item .connection-dot.left { left: -7px; top: 50%; transform: translateY(-50%); }
+    .node-item .connection-dot.right { right: -7px; top: 50%; transform: translateY(-50%); }
+
+    .map-controls {
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+      z-index: 10;
       display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      font-size: 0.65rem;
-      color: var(--text-muted);
-      margin-bottom: 12px;
+      gap: 8px;
     }
 
-    .scene-card .scene-meta span {
+    .map-controls button {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 8px 12px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: var(--transition);
+      font-size: 0.7rem;
       display: flex;
       align-items: center;
       gap: 4px;
+      backdrop-filter: blur(8px);
     }
 
-    .scene-card .scene-meta i {
-      font-size: 0.6rem;
+    .map-controls button:hover {
+      background: var(--bg-hover);
+      border-color: var(--border-hover);
+      color: var(--text-primary);
     }
 
-    .scene-card .card-actions {
-      display: flex;
-      gap: 8px;
-    }
-
-    .empty-library {
-      text-align: center;
-      padding: 60px 20px;
-      color: var(--text-muted);
-    }
-
-    .empty-library i {
-      font-size: 2.5rem;
-      color: var(--border-color);
-      margin-bottom: 16px;
-      display: block;
-    }
-
-    .empty-library p {
-      font-size: 0.85rem;
-    }
-
-    .empty-library small {
+    .map-controls .zoom-level {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 8px 12px;
+      color: var(--text-secondary);
       font-size: 0.7rem;
+      min-width: 50px;
+      text-align: center;
+    }
+
+    .node-map-empty {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
       color: var(--text-muted);
+      gap: 12px;
+    }
+
+    .node-map-empty i {
+      font-size: 3rem;
+      color: var(--border-color);
+    }
+
+    .node-map-empty p {
+      font-size: 0.9rem;
+    }
+
+    .node-map-empty small {
+      font-size: 0.7rem;
     }
 
     /* ============================================================
@@ -1158,22 +1121,11 @@
       transition: var(--transition);
     }
 
-    .toast.success {
-      border-left: 3px solid var(--accent-success);
-    }
+    .toast.success { border-left: 3px solid var(--accent-success); }
+    .toast.error { border-left: 3px solid var(--accent-danger); }
+    .toast.info { border-left: 3px solid var(--accent-primary); }
 
-    .toast.error {
-      border-left: 3px solid var(--accent-danger);
-    }
-
-    .toast.info {
-      border-left: 3px solid var(--accent-primary);
-    }
-
-    .toast i {
-      font-size: 1.1rem;
-    }
-
+    .toast i { font-size: 1.1rem; }
     .toast.success i { color: var(--accent-success); }
     .toast.error i { color: var(--accent-danger); }
     .toast.info i { color: var(--accent-primary); }
@@ -1202,12 +1154,9 @@
     ============================================================ */
     @media (max-width: 1024px) {
       .editor-panel {
-        width: 50%;
-        min-width: 300px;
-        padding: 1.2rem;
-      }
-      .library-panel {
-        padding: 1.2rem;
+        width: 40%;
+        min-width: 280px;
+        padding: 1rem;
       }
     }
 
@@ -1220,10 +1169,11 @@
         min-width: unset;
         border-right: none;
         border-bottom: 1px solid var(--border-color);
-        max-height: 60vh;
+        max-height: 50vh;
       }
       .library-panel {
         flex: 1;
+        min-height: 300px;
       }
       .form-row {
         grid-template-columns: 1fr;
@@ -1248,10 +1198,17 @@
       .theme-selector .theme-label span {
         display: none;
       }
+      .node-item {
+        min-width: 100px !important;
+        padding: 8px 12px !important;
+      }
+      .node-item .node-preview {
+        font-size: 0.55rem !important;
+      }
     }
 
     /* ============================================================
-       UTILITY - Color dot RGB fallbacks
+       UTILITY
     ============================================================ */
     :root {
       --bg-primary-rgb: 10, 15, 28;
@@ -1298,9 +1255,8 @@
 </head>
 <body>
 
-  <!-- ===== CURSOR ELEMENTS ===== -->
-  <div id="cursorGlow"></div>
-  <div id="cursorRing"></div>
+  <!-- ===== CURSOR TRAIL ===== -->
+  <div id="cursorTrail"></div>
 
   <!-- ===== TOP NAVBAR ===== -->
   <nav class="navbar">
@@ -1311,7 +1267,6 @@
     </div>
 
     <div class="navbar-actions">
-      <!-- Theme Selector -->
       <div class="theme-selector" id="themeSelector" onclick="toggleThemeDropdown()">
         <span class="theme-label">
           <i class="fas fa-palette"></i>
@@ -1354,7 +1309,6 @@
         </div>
       </div>
 
-      <!-- Auto-save Toggle -->
       <div class="autosave-toggle">
         <div class="label">
           <i class="fas fa-save"></i>
@@ -1392,176 +1346,173 @@
       <div class="info-banner">
         <i class="fas fa-lightbulb"></i>
         <div>
-          <strong>Quick Start:</strong> Enter scene details → Add choices or set "Continue" → 
-          <strong>Save</strong> or <strong>Auto-save</strong> will keep your work safe.
-          <span style="display: block; margin-top: 4px; font-size: 0.7rem; color: var(--text-muted);">
-            <i class="fas fa-plus-circle"></i> Use <strong>"New"</strong> buttons to create target scenes on the fly!
+          <strong>Visual Story Map:</strong> Drag nodes on the right to organize your story flow.
+          <span style="display: block; margin-top: 2px; font-size: 0.65rem; color: var(--text-muted);">
+            <i class="fas fa-arrows-alt"></i> Click & drag nodes to reposition • Connections auto-update
           </span>
         </div>
       </div>
 
-      <!-- Scene ID -->
       <div class="form-group">
         <label class="form-label">
           <i class="fas fa-tag"></i> Scene ID <span class="required">*</span>
         </label>
-        <input type="text" id="sceneId" class="form-control" placeholder="e.g., start, forest_entrance" autocomplete="off">
-        <div style="font-size: 0.6rem; color: var(--text-muted); margin-top: 4px;">
-          <i class="fas fa-info-circle"></i> Unique identifier — letters, numbers, underscores, hyphens
-        </div>
+        <input type="text" id="sceneId" class="form-control" placeholder="e.g., start, forest" autocomplete="off">
       </div>
 
-      <!-- Speaker -->
       <div class="form-group">
-        <label class="form-label"><i class="fas fa-user-astronaut"></i> Speaker / Character</label>
-        <input type="text" id="speaker" class="form-control" placeholder="Narrator, Hero, Villain...">
+        <label class="form-label"><i class="fas fa-user-astronaut"></i> Speaker</label>
+        <input type="text" id="speaker" class="form-control" placeholder="Narrator, Hero...">
       </div>
 
-      <!-- Dialogue -->
       <div class="form-group">
-        <label class="form-label"><i class="fas fa-comment-dots"></i> Dialogue / Description <span class="required">*</span></label>
-        <textarea id="dialogue" class="form-control" placeholder="Write the story text, narration or dialogue..."></textarea>
+        <label class="form-label"><i class="fas fa-comment-dots"></i> Dialogue <span class="required">*</span></label>
+        <textarea id="dialogue" class="form-control" placeholder="Write the story text..."></textarea>
       </div>
 
-      <!-- Type & Timer -->
       <div class="form-row">
         <div class="form-group">
-          <label class="form-label"><i class="fas fa-exchange-alt"></i> Interaction Type</label>
+          <label class="form-label"><i class="fas fa-exchange-alt"></i> Type</label>
           <select id="type" class="form-control">
-            <option value="choice">🎲 Branching Choices</option>
-            <option value="continue">➡️ Continue / Next</option>
+            <option value="choice">🎲 Choices</option>
+            <option value="continue">➡️ Continue</option>
           </select>
         </div>
         <div class="form-group">
-          <label class="form-label"><i class="fas fa-hourglass-half"></i> Timer (seconds)</label>
+          <label class="form-label"><i class="fas fa-hourglass-half"></i> Timer</label>
           <input type="number" id="timer" class="form-control" value="0" min="0" step="1">
-          <div style="font-size: 0.6rem; color: var(--text-muted); margin-top: 4px;">0 = no timer</div>
         </div>
       </div>
 
-      <!-- Choices -->
       <div class="form-group">
-        <label class="form-label"><i class="fas fa-list-ul"></i> Choice Options</label>
-        <div id="choices" class="choices-container">
-          <!-- Choice cards will be added here -->
-        </div>
-        <button onclick="addChoiceField()" class="btn btn-secondary btn-sm" style="margin-top: 8px; width: 100%; justify-content: center;">
+        <label class="form-label"><i class="fas fa-list-ul"></i> Choices</label>
+        <div id="choices" class="choices-container"></div>
+        <button onclick="addChoiceField()" class="btn btn-secondary btn-sm" style="margin-top: 6px; width: 100%; justify-content: center;">
           <i class="fas fa-plus-circle"></i> Add Choice
         </button>
       </div>
 
       <hr>
 
-      <!-- Continue Group -->
       <div class="form-group" id="continueGroup" style="display: none;">
         <label class="form-label"><i class="fas fa-arrow-right"></i> Next Scene <span class="required">*</span></label>
-        <div style="display: flex; gap: 8px;">
+        <div style="display: flex; gap: 6px;">
           <select id="nextScene" class="form-control" style="flex: 1;">
-            <option value="">-- Select target scene --</option>
+            <option value="">-- Select --</option>
           </select>
-          <button onclick="quickCreateTargetScene()" class="btn btn-primary btn-sm" title="Create new scene and set as target">
+          <button onclick="quickCreateTargetScene()" class="btn btn-primary btn-sm">
             <i class="fas fa-plus-circle"></i> New
           </button>
         </div>
-        <div style="font-size: 0.6rem; color: var(--text-muted); margin-top: 4px;">
-          <i class="fas fa-info-circle"></i> Choose where the story continues, or click <strong>New</strong> to create a fresh scene
-        </div>
       </div>
 
-      <!-- Action Bar -->
       <div class="action-bar">
-        <button onclick="saveSceneLogic()" class="btn btn-primary"><i class="fas fa-save"></i> Save Scene</button>
+        <button onclick="saveSceneLogic()" class="btn btn-primary"><i class="fas fa-save"></i> Save</button>
         <button onclick="clearFormFields()" class="btn btn-secondary"><i class="fas fa-eraser"></i> Clear</button>
+        <button onclick="autoLayoutNodes()" class="btn btn-secondary btn-sm" title="Auto-arrange nodes in the map">
+          <i class="fas fa-arrows-alt"></i> Auto-Layout
+        </button>
       </div>
 
       <hr>
 
-      <!-- Data Management -->
       <div>
-        <label class="form-label"><i class="fas fa-database"></i> Data Management</label>
+        <label class="form-label"><i class="fas fa-database"></i> Data</label>
         <div class="data-actions">
           <button onclick="triggerImport()" class="btn btn-secondary btn-sm"><i class="fas fa-file-import"></i> Import</button>
           <input type="file" id="fileInput" accept=".html,.json,text/html" style="display: none;">
-          <button onclick="exportFullData()" class="btn btn-success btn-sm"><i class="fas fa-download"></i> Export JSON</button>
-          <button onclick="clearAllScenes()" class="btn btn-danger btn-sm"><i class="fas fa-trash-alt"></i> Clear All</button>
+          <button onclick="exportFullData()" class="btn btn-success btn-sm"><i class="fas fa-download"></i> Export</button>
+          <button onclick="clearAllScenes()" class="btn btn-danger btn-sm"><i class="fas fa-trash-alt"></i> Clear</button>
         </div>
         <div id="exportBox"></div>
       </div>
-
-      <div style="font-size: 0.6rem; color: var(--text-muted); text-align: center; margin-top: 20px; padding-top: 12px; border-top: 1px solid var(--border-color);">
-        <i class="fas fa-shield-alt"></i> All data stored locally in your browser
-      </div>
     </div>
 
-    <!-- RIGHT: LIBRARY -->
+    <!-- RIGHT: NODE MAP -->
     <div class="library-panel">
-      <div class="library-header">
-        <h2><i class="fas fa-book-open"></i> Story Vault</h2>
-        <div class="library-stats">
-          <div class="search-box">
-            <i class="fas fa-search"></i>
-            <input type="text" id="searchScenes" placeholder="Search scenes..." oninput="filterScenes()">
-          </div>
-          <span class="count" id="sceneCountBadge"><i class="fas fa-layer-group"></i> 0 scenes</span>
+      <div class="node-map-container" id="nodeMapContainer">
+        <!-- Connections SVG -->
+        <div class="connections-layer" id="connectionsLayer">
+          <svg id="connectionsSvg"></svg>
         </div>
-      </div>
-      <div id="sceneList" class="scene-grid">
-        <div class="empty-library">
-          <i class="fas fa-folder-open"></i>
-          <p>No scenes created yet</p>
-          <small>Use the editor on the left to craft your first story scene</small>
+        
+        <!-- Nodes -->
+        <div class="nodes-layer" id="nodesLayer">
+          <div class="node-map-empty" id="nodeMapEmpty">
+            <i class="fas fa-diagram-project"></i>
+            <p>No scenes yet</p>
+            <small>Create your first scene on the left →</small>
+          </div>
+        </div>
+
+        <!-- Map Controls -->
+        <div class="map-controls">
+          <button onclick="zoomMap(1.2)"><i class="fas fa-plus"></i></button>
+          <span class="zoom-level" id="zoomLevel">100%</span>
+          <button onclick="zoomMap(0.8)"><i class="fas fa-minus"></i></button>
+          <button onclick="resetMapView()"><i class="fas fa-home"></i></button>
+          <button onclick="autoLayoutNodes()" title="Auto-layout"><i class="fas fa-arrows-alt"></i></button>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- ===== TOAST CONTAINER ===== -->
+  <!-- ===== TOAST ===== -->
   <div class="toast-container" id="toastContainer"></div>
 
   <script>
     // ============================================================
-    // CURSOR EFFECTS (ReactBits style)
+    // CURSOR EFFECT - Cosmic Trail
     // ============================================================
     (function initCursor() {
-      const glow = document.getElementById('cursorGlow');
-      const ring = document.getElementById('cursorRing');
+      const trail = document.getElementById('cursorTrail');
+      let trailParticles = [];
+      let lastX = 0, lastY = 0;
       let isHovering = false;
-      let isClicking = false;
 
       document.addEventListener('mousemove', (e) => {
-        glow.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
-        ring.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
+        trail.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
+        
+        // Create trail particles
+        if (Math.abs(e.clientX - lastX) > 3 || Math.abs(e.clientY - lastY) > 3) {
+          const particle = document.createElement('div');
+          particle.className = 'trail-particle';
+          const size = 3 + Math.random() * 4;
+          particle.style.width = size + 'px';
+          particle.style.height = size + 'px';
+          particle.style.left = e.clientX + 'px';
+          particle.style.top = e.clientY + 'px';
+          particle.style.background = getComputedStyle(document.documentElement).getPropertyValue('--accent-primary').trim();
+          document.body.appendChild(particle);
+          setTimeout(() => particle.remove(), 600);
+        }
+        lastX = e.clientX;
+        lastY = e.clientY;
       });
 
       document.addEventListener('mouseover', (e) => {
-        const target = e.target.closest('button, .btn, .choice-card, .scene-card, .theme-option, .form-control, select, .toggle-switch, .theme-selector');
+        const target = e.target.closest('button, .btn, .node-item, .choice-card, .theme-option, .form-control, select, .toggle-switch');
         if (target) {
-          ring.classList.add('hover');
+          trail.classList.add('hover');
           isHovering = true;
         }
       });
 
       document.addEventListener('mouseout', (e) => {
-        const target = e.target.closest('button, .btn, .choice-card, .scene-card, .theme-option, .form-control, select, .toggle-switch, .theme-selector');
+        const target = e.target.closest('button, .btn, .node-item, .choice-card, .theme-option, .form-control, select, .toggle-switch');
         if (target) {
-          ring.classList.remove('hover');
+          trail.classList.remove('hover');
           isHovering = false;
         }
       });
 
       document.addEventListener('mousedown', () => {
-        ring.classList.add('click');
-        isClicking = true;
-        setTimeout(() => {
-          ring.classList.remove('click');
-          isClicking = false;
-        }, 150);
+        trail.classList.add('click');
+        setTimeout(() => trail.classList.remove('click'), 150);
       });
 
-      // Hide cursor on touch devices
       if ('ontouchstart' in window) {
-        glow.style.display = 'none';
-        ring.style.display = 'none';
+        trail.style.display = 'none';
       }
     })();
 
@@ -1572,37 +1523,25 @@
       document.documentElement.setAttribute('data-theme', theme);
       localStorage.setItem('narrative-forge-theme', theme);
       
-      // Update active state in dropdown
       document.querySelectorAll('.theme-option').forEach(opt => {
         opt.classList.toggle('active', opt.dataset.theme === theme);
       });
       
-      // Update theme icon
-      const icons = {
-        dark: '🌙',
-        light: '☀️',
-        ocean: '🌊',
-        forest: '🌲',
-        sunset: '🌅',
-        purple: '🔮'
-      };
+      const icons = { dark: '🌙', light: '☀️', ocean: '🌊', forest: '🌲', sunset: '🌅', purple: '🔮' };
       document.getElementById('currentThemeIcon').textContent = icons[theme] || '🌙';
-      
-      // Close dropdown
       document.getElementById('themeDropdown').classList.remove('open');
       
-      showToast(`Theme switched to ${theme.charAt(0).toUpperCase() + theme.slice(1)}`, 'info');
+      setTimeout(() => updateConnections(), 100);
+      showToast(`Theme: ${theme.charAt(0).toUpperCase() + theme.slice(1)}`, 'info');
     }
 
     function toggleThemeDropdown() {
       document.getElementById('themeDropdown').classList.toggle('open');
     }
 
-    // Load saved theme
     const savedTheme = localStorage.getItem('narrative-forge-theme') || 'dark';
     setTheme(savedTheme);
 
-    // Close dropdown on outside click
     document.addEventListener('click', function(e) {
       const selector = document.getElementById('themeSelector');
       if (!selector.contains(e.target)) {
@@ -1611,27 +1550,286 @@
     });
 
     // ============================================================
-    // STATE
+    // NODE MAP SYSTEM
     // ============================================================
-    let scenesDatabase = {};
-    let autosaveEnabled = false;
-    let autosaveTimer = null;
-    let isSaving = false;
+    let nodePositions = {};
+    let zoomLevel = 1;
+    let isDraggingNode = false;
+    let dragTarget = null;
+    let dragOffsetX = 0, dragOffsetY = 0;
 
-    // DOM refs
-    const sceneIdInput = document.getElementById("sceneId");
-    const speakerInput = document.getElementById("speaker");
-    const dialogueInput = document.getElementById("dialogue");
-    const typeSelect = document.getElementById("type");
-    const timerInput = document.getElementById("timer");
-    const nextSceneSelect = document.getElementById("nextScene");
-    const choicesContainer = document.getElementById("choices");
-    const continueGroup = document.getElementById("continueGroup");
-    const sceneListDiv = document.getElementById("sceneList");
-    const exportBoxDiv = document.getElementById("exportBox");
-    const sceneCountBadge = document.getElementById("sceneCountBadge");
-    const navSceneCount = document.getElementById("navSceneCount");
-    const navChoiceCount = document.getElementById("navChoiceCount");
+    function getNodeType(scene) {
+      if (!scene) return 'start';
+      if (scene.choices && scene.choices.length > 0) return 'choice';
+      if (scene.nextSceneId) return 'continue';
+      if (scene.hasTapToContinue) return 'continue';
+      return 'end';
+    }
+
+    function getNodeColor(type) {
+      const colors = {
+        start: 'var(--node-start)',
+        choice: 'var(--node-choice)',
+        continue: 'var(--node-continue)',
+        end: 'var(--node-end)'
+      };
+      return colors[type] || 'var(--node-start)';
+    }
+
+    function renderNodeMap() {
+      const container = document.getElementById('nodesLayer');
+      const empty = document.getElementById('nodeMapEmpty');
+      const ids = Object.keys(scenesDatabase);
+
+      // Remove old nodes (keep empty)
+      container.querySelectorAll('.node-item').forEach(el => el.remove());
+
+      if (ids.length === 0) {
+        empty.style.display = 'flex';
+        return;
+      }
+      empty.style.display = 'none';
+
+      // Calculate grid positions if not set
+      const cols = Math.ceil(Math.sqrt(ids.length));
+      const spacing = 280;
+      const padding = 60;
+
+      ids.forEach((id, index) => {
+        if (!nodePositions[id]) {
+          const row = Math.floor(index / cols);
+          const col = index % cols;
+          nodePositions[id] = {
+            x: padding + col * spacing + Math.random() * 40 - 20,
+            y: padding + row * spacing + Math.random() * 40 - 20
+          };
+        }
+      });
+
+      // Create nodes
+      ids.forEach(id => {
+        const scene = scenesDatabase[id];
+        const pos = nodePositions[id] || { x: 100 + Math.random() * 200, y: 100 + Math.random() * 200 };
+        const type = getNodeType(scene);
+        const color = getNodeColor(type);
+        
+        const node = document.createElement('div');
+        node.className = 'node-item';
+        node.dataset.id = id;
+        node.style.left = pos.x + 'px';
+        node.style.top = pos.y + 'px';
+        
+        const hasConnections = scene.nextSceneId || (scene.choices && scene.choices.length > 0);
+        if (hasConnections) node.classList.add('has-connections');
+
+        const preview = scene.dialogue ? scene.dialogue.slice(0, 60) + (scene.dialogue.length > 60 ? '...' : '') : 'No dialogue';
+        const choiceCount = scene.choices ? scene.choices.length : 0;
+        
+        node.innerHTML = `
+          <div class="node-header">
+            <span class="node-dot ${type}"></span>
+            <span class="node-id">${escapeHtml(id)}</span>
+          </div>
+          <div class="node-preview">${escapeHtml(preview)}</div>
+          <div style="display:flex; gap:4px; margin-top:4px; flex-wrap:wrap;">
+            ${type !== 'end' ? `<span class="node-badge">${type === 'choice' ? `🎲 ${choiceCount}` : '➡️ Continue'}</span>` : ''}
+            ${scene.timerDuration ? `<span class="node-badge">⏱️ ${scene.timerDuration}s</span>` : ''}
+          </div>
+          <div class="node-actions">
+            <button onclick="editSceneById('${escapeHtml(id)}')"><i class="fas fa-pen"></i></button>
+            <button class="delete-btn" onclick="deleteSceneById('${escapeHtml(id)}')"><i class="fas fa-trash"></i></button>
+          </div>
+          <div class="connection-dot top"></div>
+          <div class="connection-dot bottom"></div>
+          <div class="connection-dot left"></div>
+          <div class="connection-dot right"></div>
+        `;
+
+        // Drag events
+        node.addEventListener('mousedown', (e) => {
+          if (e.target.closest('button')) return;
+          isDraggingNode = true;
+          dragTarget = node;
+          const rect = node.getBoundingClientRect();
+          const containerRect = document.getElementById('nodeMapContainer').getBoundingClientRect();
+          dragOffsetX = e.clientX - rect.left;
+          dragOffsetY = e.clientY - rect.top;
+          node.classList.add('dragging');
+          node.style.cursor = 'grabbing';
+        });
+
+        container.appendChild(node);
+      });
+
+      // Global mouse events for dragging
+      document.addEventListener('mousemove', (e) => {
+        if (!isDraggingNode || !dragTarget) return;
+        const containerRect = document.getElementById('nodeMapContainer').getBoundingClientRect();
+        const x = (e.clientX - containerRect.left - dragOffsetX) / zoomLevel;
+        const y = (e.clientY - containerRect.top - dragOffsetY) / zoomLevel;
+        dragTarget.style.left = x + 'px';
+        dragTarget.style.top = y + 'px';
+        const id = dragTarget.dataset.id;
+        if (id) {
+          nodePositions[id] = { x, y };
+        }
+        updateConnections();
+      });
+
+      document.addEventListener('mouseup', () => {
+        if (isDraggingNode && dragTarget) {
+          dragTarget.classList.remove('dragging');
+          dragTarget.style.cursor = '';
+          isDraggingNode = false;
+          dragTarget = null;
+          updateConnections();
+        }
+      });
+
+      updateConnections();
+    }
+
+    function updateConnections() {
+      const svg = document.getElementById('connectionsSvg');
+      const container = document.getElementById('nodeMapContainer');
+      const rect = container.getBoundingClientRect();
+      
+      // Clear old connections
+      svg.innerHTML = '';
+
+      const ids = Object.keys(scenesDatabase);
+      const nodeElements = document.querySelectorAll('.node-item');
+      const nodeMap = {};
+
+      nodeElements.forEach(el => {
+        const id = el.dataset.id;
+        const x = parseFloat(el.style.left) + el.offsetWidth / 2;
+        const y = parseFloat(el.style.top) + el.offsetHeight / 2;
+        nodeMap[id] = { x, y, el };
+      });
+
+      // Draw connections
+      ids.forEach(id => {
+        const scene = scenesDatabase[id];
+        if (!scene) return;
+        const from = nodeMap[id];
+        if (!from) return;
+
+        // Continue connection
+        if (scene.nextSceneId && nodeMap[scene.nextSceneId]) {
+          const to = nodeMap[scene.nextSceneId];
+          drawConnection(svg, from.x, from.y, to.x, to.y, 'var(--accent-primary)', false);
+        }
+
+        // Choice connections
+        if (scene.choices) {
+          scene.choices.forEach((choice, index) => {
+            if (choice.nextSceneId && nodeMap[choice.nextSceneId]) {
+              const to = nodeMap[choice.nextSceneId];
+              const colors = ['var(--accent-success)', 'var(--accent-warning)', 'var(--accent-danger)', 'var(--accent-primary)'];
+              const color = colors[index % colors.length];
+              drawConnection(svg, from.x, from.y, to.x, to.y, color, true);
+            }
+          });
+        }
+      });
+    }
+
+    function drawConnection(svg, x1, y1, x2, y2, color, dashed = false) {
+      const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      
+      // Calculate control points for curved path
+      const dx = x2 - x1;
+      const dy = y2 - y1;
+      const cx1 = x1 + dx * 0.5;
+      const cy1 = y1;
+      const cx2 = x2 - dx * 0.5;
+      const cy2 = y2;
+      
+      const d = `M ${x1} ${y1} C ${cx1} ${cy1}, ${cx2} ${cy2}, ${x2} ${y2}`;
+      
+      path.setAttribute('d', d);
+      path.setAttribute('class', `connection-line ${dashed ? 'animate' : ''}`);
+      path.setAttribute('stroke', color);
+      path.style.transition = 'stroke 0.3s, opacity 0.3s';
+      
+      // Add glow effect
+      const filterId = 'glow' + Math.random().toString(36).substr(2, 6);
+      const filter = document.createElementNS('http://www.w3.org/2000/svg', 'filter');
+      filter.setAttribute('id', filterId);
+      filter.innerHTML = `
+        <feGaussianBlur stdDeviation="3" result="blur"/>
+        <feMerge>
+          <feMergeNode in="blur"/>
+          <feMergeNode in="SourceGraphic"/>
+        </feMerge>
+      `;
+      svg.appendChild(filter);
+      path.setAttribute('filter', `url(#${filterId})`);
+      
+      // Add arrow head
+      const angle = Math.atan2(dy, dx);
+      const arrowSize = 8;
+      const arrowX = x2 - 10 * Math.cos(angle);
+      const arrowY = y2 - 10 * Math.sin(angle);
+      
+      const arrow = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+      const points = `
+        ${arrowX + arrowSize * Math.cos(angle - 0.4)},${arrowY + arrowSize * Math.sin(angle - 0.4)}
+        ${arrowX + arrowSize * 1.2 * Math.cos(angle)},${arrowY + arrowSize * 1.2 * Math.sin(angle)}
+        ${arrowX + arrowSize * Math.cos(angle + 0.4)},${arrowY + arrowSize * Math.sin(angle + 0.4)}
+      `;
+      arrow.setAttribute('points', points);
+      arrow.setAttribute('fill', color);
+      arrow.setAttribute('opacity', '0.7');
+      
+      svg.appendChild(path);
+      svg.appendChild(arrow);
+    }
+
+    function zoomMap(factor) {
+      zoomLevel *= factor;
+      zoomLevel = Math.max(0.3, Math.min(2, zoomLevel));
+      document.getElementById('nodesLayer').style.transform = `scale(${zoomLevel})`;
+      document.getElementById('nodesLayer').style.transformOrigin = 'center center';
+      document.getElementById('zoomLevel').textContent = Math.round(zoomLevel * 100) + '%';
+    }
+
+    function resetMapView() {
+      zoomLevel = 1;
+      document.getElementById('nodesLayer').style.transform = 'scale(1)';
+      document.getElementById('nodesLayer').style.transformOrigin = 'center center';
+      document.getElementById('zoomLevel').textContent = '100%';
+    }
+
+    function autoLayoutNodes() {
+      const ids = Object.keys(scenesDatabase);
+      if (ids.length === 0) return;
+
+      // Simple force-directed layout simulation
+      const cols = Math.ceil(Math.sqrt(ids.length));
+      const spacing = 300;
+      const padding = 80;
+      const containerRect = document.getElementById('nodeMapContainer').getBoundingClientRect();
+      const centerX = (containerRect.width / 2) - 100;
+      const centerY = (containerRect.height / 2) - 100;
+
+      ids.forEach((id, index) => {
+        const row = Math.floor(index / cols);
+        const col = index % cols;
+        const totalCols = Math.min(cols, ids.length);
+        const offsetX = (totalCols - 1) * spacing / 2;
+        const offsetY = (Math.ceil(ids.length / cols) - 1) * spacing / 2;
+        
+        nodePositions[id] = {
+          x: centerX + col * spacing - offsetX + (Math.random() * 20 - 10),
+          y: centerY + row * spacing - offsetY + (Math.random() * 20 - 10)
+        };
+      });
+
+      renderNodeMap();
+      showToast('📐 Auto-layout complete!', 'success');
+    }
 
     // ============================================================
     // TOAST SYSTEM
@@ -1657,7 +1855,27 @@
     }
 
     // ============================================================
-    // AUTO-SAVE TOGGLE
+    // STATE & DOM REFS
+    // ============================================================
+    let scenesDatabase = {};
+    let autosaveEnabled = false;
+    let autosaveTimer = null;
+    let isSaving = false;
+
+    const sceneIdInput = document.getElementById("sceneId");
+    const speakerInput = document.getElementById("speaker");
+    const dialogueInput = document.getElementById("dialogue");
+    const typeSelect = document.getElementById("type");
+    const timerInput = document.getElementById("timer");
+    const nextSceneSelect = document.getElementById("nextScene");
+    const choicesContainer = document.getElementById("choices");
+    const continueGroup = document.getElementById("continueGroup");
+    const exportBoxDiv = document.getElementById("exportBox");
+    const navSceneCount = document.getElementById("navSceneCount");
+    const navChoiceCount = document.getElementById("navChoiceCount");
+
+    // ============================================================
+    // AUTO-SAVE
     // ============================================================
     function toggleAutosave() {
       const toggle = document.getElementById('autosaveToggle');
@@ -1668,7 +1886,7 @@
       if (autosaveEnabled) {
         status.textContent = '● On';
         status.className = 'autosave-status saving';
-        showToast('Auto-save enabled — changes will save automatically', 'success');
+        showToast('Auto-save enabled', 'success');
         performAutosave();
         autosaveTimer = setInterval(performAutosave, 5000);
       } else {
@@ -1684,10 +1902,8 @@
       if (!autosaveEnabled || isSaving) return;
       const id = sceneIdInput.value.trim();
       if (!id) return;
-      
-      const existingScene = scenesDatabase[id];
-      const currentDialogue = dialogueInput.value.trim();
-      if (!currentDialogue) return;
+      const dialogue = dialogueInput.value.trim();
+      if (!dialogue) return;
       
       isSaving = true;
       const status = document.getElementById('autosaveStatus');
@@ -1725,7 +1941,7 @@
       const sceneIds = Object.keys(scenesDatabase);
       
       const currentNextVal = nextSceneSelect.value;
-      nextSceneSelect.innerHTML = '<option value="">-- Select target scene --</option>';
+      nextSceneSelect.innerHTML = '<option value="">-- Select --</option>';
       sceneIds.forEach(id => {
         const option = document.createElement('option');
         option.value = id;
@@ -1734,7 +1950,7 @@
       });
       const createOpt = document.createElement('option');
       createOpt.value = '__CREATE_NEW__';
-      createOpt.textContent = '➕ Create new scene...';
+      createOpt.textContent = '➕ Create new...';
       createOpt.style.color = 'var(--accent-primary)';
       createOpt.style.fontWeight = '600';
       nextSceneSelect.appendChild(createOpt);
@@ -1743,7 +1959,7 @@
 
       document.querySelectorAll('.choice-card select').forEach(selectElem => {
         const currentVal = selectElem.value;
-        selectElem.innerHTML = '<option value="">-- goto scene --</option>';
+        selectElem.innerHTML = '<option value="">-- goto --</option>';
         sceneIds.forEach(id => {
           const opt = document.createElement('option');
           opt.value = id;
@@ -1761,47 +1977,45 @@
     }
 
     // ============================================================
-    // QUICK CREATE TARGET SCENE
+    // QUICK CREATE
     // ============================================================
     window.quickCreateTargetScene = function() {
-      const newId = prompt('Enter a unique ID for the new scene:', 'scene_' + (Object.keys(scenesDatabase).length + 1));
+      const newId = prompt('Enter unique ID:', 'scene_' + (Object.keys(scenesDatabase).length + 1));
       if (!newId) return;
       if (!newId.trim() || /[^a-zA-Z0-9_\-]/.test(newId)) {
-        showToast('Invalid scene ID. Use letters, numbers, underscores, hyphens.', 'error');
+        showToast('Invalid ID', 'error');
         return;
       }
       if (scenesDatabase[newId]) {
-        showToast(`Scene "${newId}" already exists!`, 'error');
+        showToast(`"${newId}" exists!`, 'error');
         return;
       }
       scenesDatabase[newId] = {
         id: newId,
         speaker: 'New Character',
-        dialogue: 'New scene created. Edit this dialogue.',
+        dialogue: 'New scene created. Edit this.',
         hasTapToContinue: true,
         nextSceneId: '',
         timerDuration: 0
       };
-      renderSceneLibrary();
-      refreshAllDropdowns();
+      renderAll();
       setTimeout(() => {
         if (nextSceneSelect.querySelector(`option[value="${newId}"]`)) {
           nextSceneSelect.value = newId;
         }
       }, 50);
-      showToast(`✅ Scene "${newId}" created and ready!`, 'success');
-      updateNavStats();
+      showToast(`✅ "${newId}" created!`, 'success');
     };
 
     // ============================================================
-    // ADD CHOICE FIELD
+    // ADD CHOICE
     // ============================================================
     window.addChoiceField = function(choiceText = '', targetId = '') {
       const card = document.createElement('div');
       card.className = 'choice-card';
       card.innerHTML = `
         <div class="choice-row">
-          <input type="text" class="form-control choice-text" placeholder="Choice text (e.g., 'Fight the dragon')" value="${escapeHtml(choiceText)}">
+          <input type="text" class="form-control choice-text" placeholder="Choice text" value="${escapeHtml(choiceText)}">
           <select class="form-control choice-target"></select>
         </div>
         <div class="choice-actions">
@@ -1813,7 +2027,7 @@
       
       const targetSelect = card.querySelector('.choice-target');
       const sceneIds = Object.keys(scenesDatabase);
-      targetSelect.innerHTML = '<option value="">-- choose next scene --</option>';
+      targetSelect.innerHTML = '<option value="">-- goto --</option>';
       sceneIds.forEach(id => {
         const opt = document.createElement('option');
         opt.value = id;
@@ -1830,39 +2044,34 @@
       refreshAllDropdowns();
     };
 
-    // ============================================================
-    // QUICK CREATE FROM CHOICE
-    // ============================================================
     window.quickCreateFromChoice = function(btn) {
       const card = btn.closest('.choice-card');
       const selectElem = card.querySelector('.choice-target');
-      const newId = prompt('Enter a unique ID for the new target scene:', 'scene_' + (Object.keys(scenesDatabase).length + 1));
+      const newId = prompt('Enter ID:', 'scene_' + (Object.keys(scenesDatabase).length + 1));
       if (!newId) return;
       if (!newId.trim() || /[^a-zA-Z0-9_\-]/.test(newId)) {
-        showToast('Invalid scene ID.', 'error');
+        showToast('Invalid ID', 'error');
         return;
       }
       if (scenesDatabase[newId]) {
-        showToast(`Scene "${newId}" already exists!`, 'error');
+        showToast(`"${newId}" exists!`, 'error');
         return;
       }
       scenesDatabase[newId] = {
         id: newId,
         speaker: 'New Character',
-        dialogue: 'New scene created from choice. Edit this dialogue.',
+        dialogue: 'New scene from choice.',
         hasTapToContinue: true,
         nextSceneId: '',
         timerDuration: 0
       };
-      renderSceneLibrary();
-      refreshAllDropdowns();
+      renderAll();
       setTimeout(() => {
         if (selectElem.querySelector(`option[value="${newId}"]`)) {
           selectElem.value = newId;
         }
       }, 50);
-      showToast(`✅ Scene "${newId}" created and linked!`, 'success');
-      updateNavStats();
+      showToast(`✅ "${newId}" created!`, 'success');
     };
 
     window.removeChoiceItem = function(btn) {
@@ -1876,22 +2085,22 @@
     }
 
     // ============================================================
-    // SAVE SCENE LOGIC
+    // SAVE SCENE
     // ============================================================
     window.saveSceneLogic = function(silent = false) {
       const id = sceneIdInput.value.trim();
       if (!id) {
-        if (!silent) showToast('❌ Scene ID is required', 'error');
+        if (!silent) showToast('❌ Scene ID required', 'error');
         return false;
       }
       if (/[^a-zA-Z0-9_\-]/.test(id)) {
-        if (!silent) showToast('⚠️ Invalid Scene ID', 'error');
+        if (!silent) showToast('⚠️ Invalid ID', 'error');
         return false;
       }
       const speaker = speakerInput.value.trim() || 'Narrator';
       const dialogue = dialogueInput.value.trim();
       if (!dialogue) {
-        if (!silent) showToast('📖 Please add dialogue', 'error');
+        if (!silent) showToast('📖 Dialogue required', 'error');
         return false;
       }
       const type = typeSelect.value;
@@ -1903,31 +2112,30 @@
       if (type === 'continue') {
         let nextSceneVal = nextSceneSelect.value;
         if (nextSceneVal === '__CREATE_NEW__') {
-          const newId = prompt('Enter ID for new scene:', 'scene_' + (Object.keys(scenesDatabase).length + 1));
+          const newId = prompt('Enter ID:', 'scene_' + (Object.keys(scenesDatabase).length + 1));
           if (!newId) return false;
           if (!newId.trim() || /[^a-zA-Z0-9_\-]/.test(newId)) {
-            showToast('Invalid scene ID.', 'error');
+            showToast('Invalid ID', 'error');
             return false;
           }
           if (scenesDatabase[newId]) {
-            showToast(`Scene "${newId}" already exists!`, 'error');
+            showToast(`"${newId}" exists!`, 'error');
             return false;
           }
           scenesDatabase[newId] = {
             id: newId,
             speaker: 'New Character',
-            dialogue: 'New scene created. Edit this dialogue.',
+            dialogue: 'New scene created.',
             hasTapToContinue: true,
             nextSceneId: '',
             timerDuration: 0
           };
           nextSceneVal = newId;
-          renderSceneLibrary();
-          refreshAllDropdowns();
-          showToast(`✅ New scene "${newId}" created!`, 'success');
+          renderAll();
+          showToast(`✅ "${newId}" created!`, 'success');
         }
         if (!nextSceneVal || nextSceneVal === '') {
-          if (!silent) showToast('⚠️ Please select a Next Scene or create one', 'error');
+          if (!silent) showToast('⚠️ Select a Next Scene', 'error');
           return false;
         }
         sceneObj.hasTapToContinue = true;
@@ -1936,7 +2144,7 @@
       } else {
         const choiceCards = document.querySelectorAll('#choices .choice-card');
         if (choiceCards.length === 0) {
-          if (!silent) showToast('❌ Add at least one choice or switch to Continue mode', 'error');
+          if (!silent) showToast('❌ Add at least one choice', 'error');
           return false;
         }
         let choicesArray = [];
@@ -1948,20 +2156,19 @@
           let nextId = targetElem ? targetElem.value : '';
 
           if (nextId === '__CREATE_NEW__') {
-            const newId = prompt('Enter ID for new target scene:', 'scene_' + (Object.keys(scenesDatabase).length + 1));
+            const newId = prompt('Enter ID:', 'scene_' + (Object.keys(scenesDatabase).length + 1));
             if (newId && newId.trim() && !/[^a-zA-Z0-9_\-]/.test(newId) && !scenesDatabase[newId]) {
               scenesDatabase[newId] = {
                 id: newId,
                 speaker: 'New Character',
-                dialogue: 'New scene from choice. Edit this.',
+                dialogue: 'New scene from choice.',
                 hasTapToContinue: true,
                 nextSceneId: '',
                 timerDuration: 0
               };
               nextId = newId;
-              renderSceneLibrary();
-              refreshAllDropdowns();
-              showToast(`✅ Scene "${newId}" created!`, 'success');
+              renderAll();
+              showToast(`✅ "${newId}" created!`, 'success');
             } else if (newId && scenesDatabase[newId]) {
               nextId = newId;
             } else {
@@ -1976,7 +2183,7 @@
         });
         if (!valid) return false;
         if (choicesArray.length === 0) {
-          if (!silent) showToast('❌ At least one valid choice required', 'error');
+          if (!silent) showToast('❌ Need valid choices', 'error');
           return false;
         }
         sceneObj.choices = choicesArray;
@@ -1985,77 +2192,31 @@
       }
 
       scenesDatabase[id] = sceneObj;
-      renderSceneLibrary();
-      refreshAllDropdowns();
-      updateNavStats();
+      renderAll();
       if (!silent) {
-        showToast(`✅ Scene "${id}" saved successfully!`, 'success');
+        showToast(`✅ "${id}" saved!`, 'success');
         clearFormFields();
       }
       return true;
     };
 
     // ============================================================
-    // RENDER SCENE LIBRARY
+    // RENDER ALL
     // ============================================================
-    function renderSceneLibrary() {
-      const ids = Object.keys(scenesDatabase);
-      const count = ids.length;
-      sceneCountBadge.innerHTML = `<i class="fas fa-layer-group"></i> ${count} scene${count !== 1 ? 's' : ''}`;
+    function renderAll() {
+      renderNodeMap();
+      refreshAllDropdowns();
       updateNavStats();
-
-      if (count === 0) {
-        sceneListDiv.innerHTML = `
-          <div class="empty-library">
-            <i class="fas fa-folder-open"></i>
-            <p>No scenes created yet</p>
-            <small>Use the editor on the left to craft your first story scene</small>
-          </div>
-        `;
-        return;
+      // Update export box if open
+      if (exportBoxDiv.querySelector('.export-preview')) {
+        const dataStr = JSON.stringify(scenesDatabase, null, 2);
+        const textarea = exportBoxDiv.querySelector('textarea');
+        if (textarea) textarea.value = dataStr;
       }
-
-      let html = '';
-      ids.forEach(id => {
-        const s = scenesDatabase[id];
-        const typeLabel = s.choices ? `🎲 ${s.choices.length} choice${s.choices.length !== 1 ? 's' : ''}` : `➡️ Continue → ${s.nextSceneId || '?'}`;
-        const preview = s.dialogue.length > 90 ? s.dialogue.slice(0, 87) + '...' : s.dialogue;
-        html += `
-          <div class="scene-card" data-id="${escapeHtml(id)}">
-            <div class="scene-header">
-              <span class="scene-id-badge"><i class="fas fa-hashtag"></i> ${escapeHtml(id)}</span>
-              <span class="scene-type-tag">${typeLabel}</span>
-            </div>
-            <div class="scene-dialogue"><i class="fas fa-quote-left"></i> ${escapeHtml(preview)}</div>
-            <div class="scene-meta">
-              <span><i class="fas fa-user"></i> ${escapeHtml(s.speaker || 'Narrator')}</span>
-              ${s.timerDuration ? `<span><i class="fas fa-clock"></i> ${s.timerDuration}s</span>` : ''}
-              ${s.choices ? `<span><i class="fas fa-arrow-branch"></i> ${s.choices.length} branches</span>` : ''}
-            </div>
-            <div class="card-actions">
-              <button class="btn btn-secondary btn-xs" onclick="editSceneById('${escapeHtml(id)}')"><i class="fas fa-pen"></i> Edit</button>
-              <button class="btn btn-danger btn-xs" onclick="deleteSceneById('${escapeHtml(id)}')"><i class="fas fa-trash"></i> Delete</button>
-            </div>
-          </div>
-        `;
-      });
-      sceneListDiv.innerHTML = html;
     }
 
     // ============================================================
-    // FILTER SCENES
-    // ============================================================
-    function filterScenes() {
-      const query = document.getElementById('searchScenes').value.toLowerCase().trim();
-      document.querySelectorAll('.scene-card').forEach(card => {
-        const id = card.dataset.id?.toLowerCase() || '';
-        const text = card.textContent?.toLowerCase() || '';
-        card.style.display = (id.includes(query) || text.includes(query)) ? '' : 'none';
-      });
-    }
-
-    // ============================================================
-    // UPDATE NAV STATS
+    // UPDATE STATS
     // ============================================================
     function updateNavStats() {
       const count = Object.keys(scenesDatabase).length;
@@ -2065,10 +2226,11 @@
         if (s.choices) totalChoices += s.choices.length;
       });
       navChoiceCount.textContent = totalChoices;
+      document.getElementById('sceneCountBadge').textContent = count + ' scenes';
     }
 
     // ============================================================
-    // EDIT / DELETE SCENES
+    // EDIT / DELETE
     // ============================================================
     window.editSceneById = function(id) {
       const scene = scenesDatabase[id];
@@ -2098,28 +2260,26 @@
           }
         }, 50);
       }
-      showToast(`📝 Editing scene "${id}"`, 'info');
+      showToast(`📝 Editing "${id}"`, 'info');
     };
 
     window.deleteSceneById = function(id) {
-      if (confirm(`🗑️ Permanently delete scene "${id}"?`)) {
+      if (confirm(`🗑️ Delete "${id}"?`)) {
         delete scenesDatabase[id];
-        renderSceneLibrary();
-        refreshAllDropdowns();
-        updateNavStats();
+        delete nodePositions[id];
+        renderAll();
         if (sceneIdInput.value === id) clearFormFields();
-        showToast(`🗑️ Scene "${id}" deleted`, 'info');
+        showToast(`🗑️ "${id}" deleted`, 'info');
       }
     };
 
     window.clearAllScenes = function() {
-      if (confirm('⚠️ Delete ALL scenes? This cannot be undone!')) {
+      if (confirm('⚠️ Delete ALL scenes?')) {
         scenesDatabase = {};
-        renderSceneLibrary();
-        refreshAllDropdowns();
+        nodePositions = {};
+        renderAll();
         clearFormFields();
-        updateNavStats();
-        showToast('All scenes cleared', 'info');
+        showToast('All cleared', 'info');
       }
     };
 
@@ -2151,19 +2311,16 @@
             <button class="btn btn-primary btn-xs" onclick="copyExportToClipboard()"><i class="fas fa-copy"></i> Copy</button>
           </div>
           <textarea rows="6" readonly>${escapeHtml(dataStr)}</textarea>
-          <div style="font-size:0.6rem; color:var(--text-muted); margin-top:6px;">
-            <i class="fas fa-check-circle" style="color:var(--accent-success);"></i> Ready for game engine integration
-          </div>
         </div>
       `;
-      showToast('📤 JSON exported successfully', 'success');
+      showToast('📤 Exported!', 'success');
     };
 
     window.copyExportToClipboard = function() {
       const txt = document.querySelector('#exportBox textarea');
       if (txt) {
         navigator.clipboard.writeText(txt.value).then(
-          () => showToast('📋 JSON copied to clipboard!', 'success'),
+          () => showToast('📋 Copied!', 'success'),
           () => showToast('Copy failed', 'error')
         );
       }
@@ -2194,9 +2351,8 @@
           }
           if (importedData && typeof importedData === 'object' && !Array.isArray(importedData)) {
             scenesDatabase = importedData;
-            renderSceneLibrary();
-            refreshAllDropdowns();
-            updateNavStats();
+            nodePositions = {};
+            renderAll();
             exportBoxDiv.innerHTML = '';
             showToast(`✨ Imported ${Object.keys(scenesDatabase).length} scenes!`, 'success');
           } else throw new Error('Invalid format');
@@ -2214,14 +2370,14 @@
     function initDemo() {
       if (Object.keys(scenesDatabase).length === 0) {
         scenesDatabase = {
-          'start': { id: 'start', speaker: 'Guide', dialogue: 'Welcome to Narrative Forge! This is a demo scene. Create your own story.', hasTapToContinue: true, nextSceneId: 'forest', timerDuration: 0 },
-          'forest': { id: 'forest', speaker: 'Narrator', dialogue: 'You step into the enchanted woods. Two paths ahead.', choices: [{ text: 'Take the left path', nextSceneId: 'cave' }, { text: 'Go right towards the village', nextSceneId: 'village' }] },
-          'cave': { id: 'cave', speaker: 'Echo', dialogue: 'Dark cave. A mysterious glow...', hasTapToContinue: true, nextSceneId: 'start' },
-          'village': { id: 'village', speaker: 'Elder', dialogue: 'Peaceful village. You rest.', hasTapToContinue: true, nextSceneId: 'start' }
+          'start': { id: 'start', speaker: 'Guide', dialogue: 'Welcome to Narrative Forge! Begin your adventure.', hasTapToContinue: true, nextSceneId: 'forest', timerDuration: 0 },
+          'forest': { id: 'forest', speaker: 'Narrator', dialogue: 'You enter the enchanted forest. Two paths ahead.', choices: [{ text: 'Take the left path', nextSceneId: 'cave' }, { text: 'Go right to the village', nextSceneId: 'village' }] },
+          'cave': { id: 'cave', speaker: 'Echo', dialogue: 'Dark cave. A mysterious glow...', hasTapToContinue: true, nextSceneId: 'treasure', timerDuration: 0 },
+          'village': { id: 'village', speaker: 'Elder', dialogue: 'Peaceful village. You rest.', hasTapToContinue: true, nextSceneId: 'start', timerDuration: 0 },
+          'treasure': { id: 'treasure', speaker: 'Narrator', dialogue: 'You found the treasure! The end.', hasTapToContinue: true, nextSceneId: 'start', timerDuration: 0 }
         };
-        renderSceneLibrary();
-        refreshAllDropdowns();
-        updateNavStats();
+        renderAll();
+        setTimeout(autoLayoutNodes, 200);
       }
     }
     initDemo();
@@ -2238,6 +2394,11 @@
         e.preventDefault();
         toggleAutosave();
       }
+      if (e.key === 'l' || e.key === 'L') {
+        if (!e.ctrlKey && !e.metaKey) {
+          autoLayoutNodes();
+        }
+      }
     });
 
     // ============================================================
@@ -2248,8 +2409,8 @@
     });
 
     console.log('🚀 Narrative Forge Pro loaded!');
-    console.log('📖 Shortcuts: Ctrl+S = Save, Ctrl+Shift+A = Toggle Autosave');
-    console.log('🎨 Themes available: dark, light, ocean, forest, sunset, purple');
+    console.log('📖 Shortcuts: Ctrl+S=Save, Ctrl+Shift+A=Toggle Auto-save, L=Auto-layout');
+    console.log('🎨 Drag nodes to organize your story map!');
   </script>
 </body>
 </html>
