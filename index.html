@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
   <title>✨ Narrative Forge | Professional Story Builder</title>
-  <!-- Google Fonts & Smooth Icons -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <style>
@@ -22,7 +21,6 @@
       overflow: hidden;
     }
 
-    /* custom scroll */
     ::-webkit-scrollbar {
       width: 6px;
       height: 6px;
@@ -39,7 +37,6 @@
       background: #8196B3;
     }
 
-    /* main container */
     .app-wrapper {
       display: flex;
       height: 100vh;
@@ -47,7 +44,6 @@
       backdrop-filter: blur(1px);
     }
 
-    /* ========= LEFT SIDEBAR (EDITOR) ========= */
     .editor-panel {
       width: 42%;
       background: rgba(15, 23, 42, 0.85);
@@ -58,7 +54,6 @@
       box-shadow: 8px 0 20px rgba(0,0,0,0.3);
     }
 
-    /* ========= RIGHT PANEL (LIBRARY) ========= */
     .library-panel {
       width: 58%;
       background: #0A0F1C;
@@ -68,7 +63,6 @@
       background-size: 32px 32px;
     }
 
-    /* headings & decorative */
     .logo-area {
       display: flex;
       align-items: center;
@@ -123,7 +117,6 @@
       font-weight: 500;
     }
 
-    /* form styling */
     .form-group {
       margin-bottom: 1.25rem;
     }
@@ -164,7 +157,6 @@
       min-height: 75px;
     }
 
-    /* choice blocks */
     .choices-container {
       background: rgba(0, 0, 0, 0.2);
       border-radius: 20px;
@@ -212,7 +204,6 @@
       color: #FF8A8A;
     }
 
-    /* buttons unified */
     button, .btn-like {
       background: #1E293B;
       border: none;
@@ -243,11 +234,24 @@
     .btn-primary:hover {
       background: linear-gradient(105deg, #38BDF8, #2563EB);
     }
+    .btn-success {
+      background: linear-gradient(105deg, #10B981, #059669);
+      color: white;
+    }
+    .btn-success:hover {
+      background: linear-gradient(105deg, #34D399, #10B981);
+    }
     .btn-danger {
       background: #7F1D1D;
     }
     .btn-danger:hover {
       background: #B91C1C;
+    }
+    .btn-warning {
+      background: #92400E;
+    }
+    .btn-warning:hover {
+      background: #B45309;
     }
     .action-bar {
       display: flex;
@@ -263,7 +267,6 @@
       margin: 1.5rem 0;
     }
 
-    /* scene cards in right panel */
     .scene-grid {
       display: flex;
       flex-direction: column;
@@ -323,7 +326,6 @@
       color: #5B6D8C;
     }
 
-    /* export modal style inside */
     .export-preview {
       background: #020617;
       border-radius: 18px;
@@ -339,6 +341,24 @@
       font-size: 0.7rem;
       color: #8196B3;
       margin-top: 6px;
+    }
+    
+    .quick-create-btn {
+      background: #1E3A5F;
+      border: 1px dashed #38BDF8;
+      padding: 4px 12px;
+      border-radius: 30px;
+      font-size: 0.75rem;
+      color: #7DD3FC;
+      cursor: pointer;
+      transition: 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .quick-create-btn:hover {
+      background: #2A4A7A;
+      border-color: #60A5FA;
     }
 
     @media (max-width: 800px) {
@@ -402,10 +422,15 @@
 
     <div class="form-group" id="continueGroup" style="display: none;">
       <label><i class="fas fa-arrow-right"></i> Next Scene ID (Continue type)</label>
-      <select id="nextScene" style="background:#0F172A;">
-        <option value="">-- Select target scene --</option>
-      </select>
-      <div class="tooltip-note">Choose where the story flows after this scene.</div>
+      <div style="display: flex; gap: 8px; align-items: center;">
+        <select id="nextScene" style="flex: 1; background:#0F172A;">
+          <option value="">-- Select target scene --</option>
+        </select>
+        <button onclick="quickCreateTargetScene()" class="quick-create-btn" title="Create a new scene and set it as target">
+          <i class="fas fa-plus-circle"></i> New
+        </button>
+      </div>
+      <div class="tooltip-note"><i class="fas fa-info-circle"></i> Choose where the story flows after this scene. Click <strong>"New"</strong> to create a target scene on the fly.</div>
     </div>
 
     <div class="action-bar">
@@ -421,6 +446,7 @@
         <button onclick="triggerImport()"><i class="fas fa-file-import"></i> Import HTML/JSON</button>
         <input type="file" id="fileInput" accept=".html,.json,text/html" style="display: none;">
         <button onclick="exportFullData()"><i class="fas fa-download"></i> Export Story JSON</button>
+        <button onclick="clearAllScenes()" class="btn-danger"><i class="fas fa-trash-alt"></i> Clear All</button>
       </div>
       <div id="exportBox" style="margin-top: 16px;"></div>
     </div>
@@ -443,7 +469,7 @@
 
 <script>
   // ---------- STATE ----------
-  let scenesDatabase = {};      // all story scenes
+  let scenesDatabase = {};
   let currentChoiceCounter = 0;
 
   // DOM refs
@@ -472,7 +498,8 @@
   // Refresh all dropdowns (nextScene selector + choices selects)
   function refreshAllDropdowns() {
     const sceneIds = Object.keys(scenesDatabase);
-    // update nextScene dropdown
+    
+    // Update nextScene dropdown with "Create New" option
     let currentNextVal = nextSceneSelect.value;
     nextSceneSelect.innerHTML = '<option value="">-- Select target scene --</option>';
     sceneIds.forEach(id => {
@@ -481,11 +508,19 @@
       option.textContent = id;
       nextSceneSelect.appendChild(option);
     });
+    // Add a special "Create New" option at the end
+    const createOption = document.createElement("option");
+    createOption.value = "__CREATE_NEW__";
+    createOption.textContent = "➕ Create new scene...";
+    createOption.style.color = "#38BDF8";
+    createOption.style.fontWeight = "bold";
+    nextSceneSelect.appendChild(createOption);
+    
     if (sceneIds.includes(currentNextVal)) nextSceneSelect.value = currentNextVal;
     else nextSceneSelect.value = "";
 
-    // update each choice row's select dropdown
-    document.querySelectorAll(".choice-card select").forEach((selectElem, idx) => {
+    // update each choice row's select dropdown with "Create New" option
+    document.querySelectorAll(".choice-card select").forEach((selectElem) => {
       const currentChoiceVal = selectElem.value;
       selectElem.innerHTML = '<option value="">-- goto scene --</option>';
       sceneIds.forEach(id => {
@@ -494,12 +529,59 @@
         opt.textContent = id;
         selectElem.appendChild(opt);
       });
+      const createOpt = document.createElement("option");
+      createOpt.value = "__CREATE_NEW__";
+      createOpt.textContent = "➕ Create new...";
+      createOpt.style.color = "#38BDF8";
+      createOpt.style.fontWeight = "bold";
+      selectElem.appendChild(createOpt);
+      
       if (sceneIds.includes(currentChoiceVal)) selectElem.value = currentChoiceVal;
       else selectElem.value = "";
     });
   }
 
-  // Add new choice field
+  // Quick create target scene
+  window.quickCreateTargetScene = function() {
+    const newId = prompt("Enter a unique ID for the new scene:", "scene_" + (Object.keys(scenesDatabase).length + 1));
+    if (!newId) return;
+    if (newId.trim() === "") {
+      alert("Scene ID cannot be empty.");
+      return;
+    }
+    if (/[^a-zA-Z0-9_\-]/.test(newId)) {
+      alert("Scene ID can only contain letters, numbers, underscores or hyphens.");
+      return;
+    }
+    if (scenesDatabase[newId]) {
+      alert(`Scene "${newId}" already exists!`);
+      return;
+    }
+    
+    // Create a basic scene
+    const newScene = {
+      id: newId,
+      speaker: "New Character",
+      dialogue: "New scene created. Edit this dialogue.",
+      hasTapToContinue: true,
+      nextSceneId: "",
+      timerDuration: 0
+    };
+    scenesDatabase[newId] = newScene;
+    renderSceneLibrary();
+    refreshAllDropdowns();
+    
+    // Select the newly created scene in the dropdown
+    setTimeout(() => {
+      if (nextSceneSelect.querySelector(`option[value="${newId}"]`)) {
+        nextSceneSelect.value = newId;
+      }
+    }, 50);
+    
+    alert(`✅ Scene "${newId}" created and ready to use! You can edit it later.`);
+  };
+
+  // Add new choice field with quick create support
   window.addChoiceField = function(choiceText = "", targetId = "") {
     const choiceDiv = document.createElement("div");
     choiceDiv.className = "choice-card";
@@ -512,10 +594,14 @@
       </div>
       <div class="choice-actions">
         <button class="btn-icon-sm" onclick="removeChoiceItem(this)"><i class="fas fa-trash-alt"></i> Remove choice</button>
+        <button class="quick-create-btn" onclick="quickCreateFromChoice(this)" style="font-size:0.7rem; margin-left:auto;">
+          <i class="fas fa-plus-circle"></i> Create target
+        </button>
       </div>
     `;
     choicesContainer.appendChild(choiceDiv);
-    // populate the select inside this new choice
+    
+    // Populate the select inside this new choice
     const sceneIds = Object.keys(scenesDatabase);
     const targetSelect = choiceDiv.querySelector(".choice-target");
     targetSelect.innerHTML = '<option value="">-- choose next scene --</option>';
@@ -525,8 +611,56 @@
       opt.textContent = id;
       targetSelect.appendChild(opt);
     });
+    const createOpt = document.createElement("option");
+    createOpt.value = "__CREATE_NEW__";
+    createOpt.textContent = "➕ Create new...";
+    createOpt.style.color = "#38BDF8";
+    createOpt.style.fontWeight = "bold";
+    targetSelect.appendChild(createOpt);
+    
     if (targetId && sceneIds.includes(targetId)) targetSelect.value = targetId;
-    refreshAllDropdowns(); // ensure consistency
+    refreshAllDropdowns();
+  };
+
+  // Quick create from choice dropdown
+  window.quickCreateFromChoice = function(btn) {
+    const card = btn.closest(".choice-card");
+    const selectElem = card.querySelector(".choice-target");
+    const newId = prompt("Enter a unique ID for the new target scene:", "scene_" + (Object.keys(scenesDatabase).length + 1));
+    if (!newId) return;
+    if (newId.trim() === "") {
+      alert("Scene ID cannot be empty.");
+      return;
+    }
+    if (/[^a-zA-Z0-9_\-]/.test(newId)) {
+      alert("Scene ID can only contain letters, numbers, underscores or hyphens.");
+      return;
+    }
+    if (scenesDatabase[newId]) {
+      alert(`Scene "${newId}" already exists!`);
+      return;
+    }
+    
+    const newScene = {
+      id: newId,
+      speaker: "New Character",
+      dialogue: "New scene created from choice. Edit this dialogue.",
+      hasTapToContinue: true,
+      nextSceneId: "",
+      timerDuration: 0
+    };
+    scenesDatabase[newId] = newScene;
+    renderSceneLibrary();
+    refreshAllDropdowns();
+    
+    // Set the select to the new scene
+    setTimeout(() => {
+      if (selectElem.querySelector(`option[value="${newId}"]`)) {
+        selectElem.value = newId;
+      }
+    }, 50);
+    
+    alert(`✅ Scene "${newId}" created and linked to this choice!`);
   };
 
   window.removeChoiceItem = function(btn) {
@@ -534,10 +668,17 @@
     if (card) card.remove();
   };
 
-  // escape helper
-  function escapeHtml(str) { if(!str) return ''; return str.replace(/[&<>]/g, function(m){if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;});}
+  function escapeHtml(str) { 
+    if(!str) return ''; 
+    return str.replace(/[&<>]/g, function(m){
+      if(m==='&') return '&amp;'; 
+      if(m==='<') return '&lt;'; 
+      if(m==='>') return '&gt;'; 
+      return m;
+    });
+  }
 
-  // Save scene logic (fixed confusion)
+  // Save scene logic with special handling for "__CREATE_NEW__"
   window.saveSceneLogic = function() {
     const id = sceneIdInput.value.trim();
     if (!id) {
@@ -567,14 +708,48 @@
     if (timerVal > 0) sceneObj.timerDuration = timerVal;
 
     if (type === "continue") {
-      const nextSceneVal = nextSceneSelect.value;
-      if (!nextSceneVal) {
-        alert("⚠️ For 'Continue' type, you must select a Next Scene from the dropdown.");
+      let nextSceneVal = nextSceneSelect.value;
+      
+      // Handle "Create New" option
+      if (nextSceneVal === "__CREATE_NEW__") {
+        const newId = prompt("Enter a unique ID for the new target scene:", "scene_" + (Object.keys(scenesDatabase).length + 1));
+        if (!newId) return;
+        if (newId.trim() === "") {
+          alert("Scene ID cannot be empty.");
+          return;
+        }
+        if (/[^a-zA-Z0-9_\-]/.test(newId)) {
+          alert("Scene ID can only contain letters, numbers, underscores or hyphens.");
+          return;
+        }
+        if (scenesDatabase[newId]) {
+          alert(`Scene "${newId}" already exists!`);
+          return;
+        }
+        
+        // Create the new scene
+        const newScene = {
+          id: newId,
+          speaker: "New Character",
+          dialogue: "New scene created. Edit this dialogue.",
+          hasTapToContinue: true,
+          nextSceneId: "",
+          timerDuration: 0
+        };
+        scenesDatabase[newId] = newScene;
+        nextSceneVal = newId;
+        renderSceneLibrary();
+        refreshAllDropdowns();
+        alert(`✅ New scene "${newId}" created and linked!`);
+      }
+      
+      if (!nextSceneVal || nextSceneVal === "") {
+        alert("⚠️ For 'Continue' type, you must select a Next Scene or create a new one.");
         return;
       }
+      
       sceneObj.hasTapToContinue = true;
       sceneObj.nextSceneId = nextSceneVal;
-      // ensure no choices property
       delete sceneObj.choices;
     } 
     else {  // choice mode
@@ -585,34 +760,65 @@
       }
       let choicesArray = [];
       let valid = true;
+      let needsRefresh = false;
+      
       choiceCards.forEach(card => {
         const choiceTextElem = card.querySelector(".choice-text");
         const choiceTargetElem = card.querySelector(".choice-target");
         const choiceText = choiceTextElem ? choiceTextElem.value.trim() : "";
-        const nextId = choiceTargetElem ? choiceTargetElem.value : "";
+        let nextId = choiceTargetElem ? choiceTargetElem.value : "";
+        
+        // Handle "Create New" option for choices
+        if (nextId === "__CREATE_NEW__") {
+          const newId = prompt("Enter a unique ID for the new target scene:", "scene_" + (Object.keys(scenesDatabase).length + 1));
+          if (newId && newId.trim() !== "" && !/[^a-zA-Z0-9_\-]/.test(newId) && !scenesDatabase[newId]) {
+            const newScene = {
+              id: newId,
+              speaker: "New Character",
+              dialogue: "New scene created from choice. Edit this dialogue.",
+              hasTapToContinue: true,
+              nextSceneId: "",
+              timerDuration: 0
+            };
+            scenesDatabase[newId] = newScene;
+            nextId = newId;
+            needsRefresh = true;
+          } else if (newId && scenesDatabase[newId]) {
+            nextId = newId;
+          } else {
+            alert(`Invalid or duplicate scene ID: "${newId}"`);
+            valid = false;
+          }
+        }
+        
         if (!choiceText) {
           alert("⚠️ Every choice must have visible text.");
           valid = false;
         }
-        if (!nextId) {
+        if (!nextId || nextId === "") {
           alert(`⚠️ Choice "${choiceText || '(empty)'}" must have a target scene.`);
           valid = false;
         }
-        if (choiceText && nextId) {
+        if (choiceText && nextId && nextId !== "") {
           choicesArray.push({ text: choiceText, nextSceneId: nextId });
         }
       });
+      
       if (!valid) return;
       if (choicesArray.length === 0) {
         alert("At least one valid choice required.");
         return;
+      }
+      if (needsRefresh) {
+        renderSceneLibrary();
+        refreshAllDropdowns();
       }
       sceneObj.choices = choicesArray;
       delete sceneObj.hasTapToContinue;
       delete sceneObj.nextSceneId;
     }
 
-    // save/overwrite
+    // Save/overwrite
     scenesDatabase[id] = sceneObj;
     renderSceneLibrary();
     refreshAllDropdowns();
@@ -658,7 +864,6 @@
     speakerInput.value = scene.speaker || "";
     dialogueInput.value = scene.dialogue || "";
     timerInput.value = scene.timerDuration || 0;
-    // clear choices container
     choicesContainer.innerHTML = "";
     if (scene.choices && scene.choices.length > 0) {
       typeSelect.value = "choice";
@@ -668,7 +873,6 @@
     } else {
       typeSelect.value = "continue";
       if (scene.nextSceneId) {
-        // need to populate next scene select after refresh dropdowns
         setTimeout(() => {
           if (nextSceneSelect.querySelector(`option[value="${scene.nextSceneId}"]`)) 
             nextSceneSelect.value = scene.nextSceneId;
@@ -679,7 +883,6 @@
     }
     toggleContinueField();
     refreshAllDropdowns();
-    // ensure next scene properly selected if continue mode
     if (!scene.choices && scene.nextSceneId) {
       setTimeout(() => {
         if (nextSceneSelect.querySelector(`option[value="${scene.nextSceneId}"]`))
@@ -693,8 +896,17 @@
       delete scenesDatabase[id];
       renderSceneLibrary();
       refreshAllDropdowns();
-      // if current form has that ID, clear it
       if (sceneIdInput.value === id) clearFormFields();
+    }
+  };
+
+  window.clearAllScenes = function() {
+    if (confirm("⚠️ Delete ALL scenes? This cannot be undone!")) {
+      scenesDatabase = {};
+      renderSceneLibrary();
+      refreshAllDropdowns();
+      clearFormFields();
+      alert("All scenes cleared.");
     }
   };
 
@@ -745,11 +957,9 @@
       const content = ev.target.result;
       try {
         let importedData = null;
-        // try parsing JSON directly
         if (file.name.endsWith(".json")) {
           importedData = JSON.parse(content);
         } else {
-          // HTML file extraction: look for const gameScenes = {...};
           const match = content.match(/const\s+gameScenes\s*=\s*(\{[\s\S]*?\});/);
           if (match && match[1]) {
             const objCandidate = new Function("return " + match[1])();
@@ -776,7 +986,7 @@
     reader.readAsText(file);
   });
 
-  // initial demo data for showcase (optional but adds helpful start)
+  // Initialize with demo data
   function initDemoHint() {
     if (Object.keys(scenesDatabase).length === 0) {
       scenesDatabase = {
