@@ -927,10 +927,11 @@
     }
 
     .node-item.dragging {
-      cursor: grabbing;
+      cursor: grabbing !important;
       box-shadow: 0 12px 40px var(--shadow-color);
       z-index: 20;
       transform: scale(1.05);
+      transition: box-shadow 0.3s, transform 0.2s;
     }
 
     /* ===== NODE GLOW EFFECTS ===== */
@@ -1673,30 +1674,18 @@
     })();
 
     // ============================================================
-    // THEME SYSTEM - FIXED
+    // THEME SYSTEM
     // ============================================================
     function setTheme(theme) {
-      // Set the data-theme attribute on html element
       document.documentElement.setAttribute('data-theme', theme);
       localStorage.setItem('narrative-forge-theme', theme);
       
-      // Update active state in dropdown
       document.querySelectorAll('.theme-option').forEach(opt => {
         opt.classList.toggle('active', opt.dataset.theme === theme);
       });
       
-      // Update theme icon
-      const icons = { 
-        dark: '🌙', 
-        light: '☀️', 
-        ocean: '🌊', 
-        forest: '🌲', 
-        sunset: '🌅', 
-        purple: '🔮' 
-      };
+      const icons = { dark: '🌙', light: '☀️', ocean: '🌊', forest: '🌲', sunset: '🌅', purple: '🔮' };
       document.getElementById('currentThemeIcon').textContent = icons[theme] || '🌙';
-      
-      // Close dropdown
       document.getElementById('themeDropdown').classList.remove('open');
       
       // Update cursor trail color
@@ -1707,7 +1696,6 @@
         trail.style.boxShadow = `0 0 20px ${accentColor}, 0 0 60px ${accentColor}, 0 0 100px ${accentColor}`;
       }
       
-      // Show toast notification
       showToast(`Theme: ${theme.charAt(0).toUpperCase() + theme.slice(1)}`, 'info');
     }
 
@@ -1715,11 +1703,9 @@
       document.getElementById('themeDropdown').classList.toggle('open');
     }
 
-    // Load saved theme
     const savedTheme = localStorage.getItem('narrative-forge-theme') || 'dark';
     setTheme(savedTheme);
 
-    // Close dropdown on outside click
     document.addEventListener('click', function(e) {
       const selector = document.getElementById('themeSelector');
       if (!selector.contains(e.target)) {
@@ -1728,7 +1714,7 @@
     });
 
     // ============================================================
-    // NODE MAP SYSTEM
+    // NODE MAP SYSTEM - FIXED DRAG
     // ============================================================
     let nodePositions = {};
     let zoomLevel = 1;
@@ -1738,7 +1724,8 @@
     
     let isDraggingNode = false;
     let dragTarget = null;
-    let dragOffsetX = 0, dragOffsetY = 0;
+    let dragStartMouseX = 0, dragStartMouseY = 0;
+    let dragStartNodeX = 0, dragStartNodeY = 0;
     
     let isPanning = false;
     let panStartX = 0, panStartY = 0;
@@ -1757,7 +1744,6 @@
       }
       document.querySelectorAll('.node-item').forEach(el => {
         el.classList.remove('glow-continue', 'glow-choice', 'glow-loop', 'glow-end', 'glow-selected', 'faded');
-        // Remove particles
         const particles = el.querySelector('.node-particles');
         if (particles) particles.remove();
       });
@@ -1801,7 +1787,6 @@
     }
 
     function createParticles(node, type) {
-      // Remove existing particles
       const existing = node.querySelector('.node-particles');
       if (existing) existing.remove();
       
@@ -1831,7 +1816,6 @@
         container.appendChild(particle);
       }
       
-      // Special: Emitting particles for source node (flow outward)
       if (type === 'continue' || type === 'choice') {
         for (let i = 0; i < 6; i++) {
           const particle = document.createElement('div');
@@ -1855,23 +1839,19 @@
     }
 
     function highlightConnections(nodeId) {
-      // Clear previous focus
       clearFocus();
       
       focusedNodeId = nodeId;
       const scene = scenesDatabase[nodeId];
       if (!scene) return;
 
-      // Get all connected node IDs with their types
-      const connections = new Map(); // nodeId -> type
+      const connections = new Map();
       
-      // Continue connection
       if (scene.nextSceneId) {
         const type = getConnectionType(scene, scene.nextSceneId);
         connections.set(scene.nextSceneId, type);
       }
       
-      // Choice connections
       if (scene.choices) {
         scene.choices.forEach(choice => {
           if (choice.nextSceneId) {
@@ -1881,44 +1861,36 @@
         });
       }
 
-      // Get all nodes
       const allNodes = document.querySelectorAll('.node-item');
       
-      // First pass: mark all as faded
       allNodes.forEach(el => {
         el.classList.add('faded');
       });
 
-      // Second pass: highlight connected nodes
       allNodes.forEach(el => {
         const id = el.dataset.id;
         
         if (id === nodeId) {
-          // Focused node - special glow
           el.classList.remove('faded');
           el.classList.add('glow-selected');
           createParticles(el, 'continue');
           
-          // Show connection count in status
           const connCount = connections.size;
           const statusText = document.getElementById('statusText');
           statusText.innerHTML = `🎯 <span class="highlight">${id}</span> → ${connCount} connection${connCount !== 1 ? 's' : ''}`;
           document.getElementById('statusBar').classList.add('visible');
           
         } else if (connections.has(id)) {
-          // Connected node - glow with type
           const type = connections.get(id);
           const glowClass = getGlowClass(type);
           el.classList.remove('faded');
           el.classList.add(glowClass);
           createParticles(el, type);
           
-          // Create flow line between nodes
           createFlowLine(document.querySelector(`.node-item[data-id="${nodeId}"]`), el, type);
         }
       });
 
-      // If no connections, show appropriate message
       if (connections.size === 0) {
         const statusText = document.getElementById('statusText');
         statusText.innerHTML = `📌 <span class="highlight">${nodeId}</span> has no outgoing connections`;
@@ -1934,13 +1906,11 @@
       const toRect = toNode.getBoundingClientRect();
       const containerRect = container.getBoundingClientRect();
       
-      // Calculate positions relative to container
       const x1 = fromRect.left + fromRect.width/2 - containerRect.left;
       const y1 = fromRect.top + fromRect.height/2 - containerRect.top;
       const x2 = toRect.left + toRect.width/2 - containerRect.left;
       const y2 = toRect.top + toRect.height/2 - containerRect.top;
       
-      // Create SVG line
       const line = document.createElement('div');
       line.className = 'flow-line visible';
       line.style.position = 'absolute';
@@ -1968,7 +1938,6 @@
       path.setAttribute('d', d);
       path.setAttribute('class', `line-path ${type}-path animate`);
       
-      // Add glow filter
       const filterId = 'flowGlow' + Math.random().toString(36).substr(2, 6);
       const filter = document.createElementNS('http://www.w3.org/2000/svg', 'filter');
       filter.setAttribute('id', filterId);
@@ -1980,7 +1949,6 @@
       line.appendChild(svg);
       container.appendChild(line);
       
-      // Add a small dot at the end (receiver)
       const dot = document.createElement('div');
       dot.style.position = 'absolute';
       dot.style.left = (x2 - 4) + 'px';
@@ -1993,17 +1961,10 @@
       dot.style.zIndex = '3';
       dot.style.animation = 'pulse 1s ease-in-out infinite';
       container.appendChild(dot);
-      
-      // Store reference to clean up later
-      setTimeout(() => {
-        if (focusedNodeId) {
-          // Keep it alive while focused
-        }
-      }, 100);
     }
 
     // ============================================================
-    // NODE RENDERER
+    // NODE RENDERER - FIXED DRAG
     // ============================================================
     function getNodeType(scene) {
       if (!scene) return 'start';
@@ -2094,18 +2055,22 @@
           }
         });
 
-        // Drag events
+        // DRAG - FIXED: Store start positions properly
         node.addEventListener('mousedown', (e) => {
           if (e.target.closest('button')) return;
+          
+          // Store the node's current position and mouse start position
+          dragStartNodeX = parseFloat(node.style.left) || 0;
+          dragStartNodeY = parseFloat(node.style.top) || 0;
+          dragStartMouseX = e.clientX;
+          dragStartMouseY = e.clientY;
+          
           isDraggingNode = true;
           dragTarget = node;
-          const rect = node.getBoundingClientRect();
-          const containerRect = document.getElementById('nodeMapContainer').getBoundingClientRect();
-          dragOffsetX = (e.clientX - rect.left) / zoomLevel;
-          dragOffsetY = (e.clientY - rect.top) / zoomLevel;
           node.classList.add('dragging');
           node.style.cursor = 'grabbing';
           e.stopPropagation();
+          e.preventDefault();
         });
 
         container.appendChild(node);
@@ -2144,21 +2109,34 @@
         mapContainer.style.cursor = 'grabbing';
       });
 
+      // DRAG - FIXED: Use proper coordinate calculation
       document.addEventListener('mousemove', (e) => {
         if (isDraggingNode && dragTarget) {
-          const containerRect = mapContainer.getBoundingClientRect();
-          const x = (e.clientX - containerRect.left - dragOffsetX * zoomLevel) / zoomLevel - panOffset.x;
-          const y = (e.clientY - containerRect.top - dragOffsetY * zoomLevel) / zoomLevel - panOffset.y;
-          dragTarget.style.left = x + 'px';
-          dragTarget.style.top = y + 'px';
+          // Calculate the mouse delta in screen space
+          const deltaX = (e.clientX - dragStartMouseX);
+          const deltaY = (e.clientY - dragStartMouseY);
+          
+          // Convert screen delta to world space (account for zoom)
+          const worldDeltaX = deltaX / zoomLevel;
+          const worldDeltaY = deltaY / zoomLevel;
+          
+          // Calculate new position
+          const newX = dragStartNodeX + worldDeltaX;
+          const newY = dragStartNodeY + worldDeltaY;
+          
+          // Apply position
+          dragTarget.style.left = newX + 'px';
+          dragTarget.style.top = newY + 'px';
+          
           const id = dragTarget.dataset.id;
           if (id) {
-            nodePositions[id] = { x, y };
+            nodePositions[id] = { x: newX, y: newY };
           }
+          
           // Update connections if focused
           if (focusedNodeId) {
             clearTimeout(updateTimeout);
-            updateTimeout = setTimeout(() => highlightConnections(focusedNodeId), 100);
+            updateTimeout = setTimeout(() => highlightConnections(focusedNodeId), 50);
           }
         }
         
@@ -2168,10 +2146,10 @@
           panOffset.x = panStartOffset.x + dx;
           panOffset.y = panStartOffset.y + dy;
           updateTransform();
-          // Update flow lines if focused
+          
           if (focusedNodeId) {
             clearTimeout(updateTimeout);
-            updateTimeout = setTimeout(() => highlightConnections(focusedNodeId), 100);
+            updateTimeout = setTimeout(() => highlightConnections(focusedNodeId), 50);
           }
         }
       });
@@ -2192,7 +2170,6 @@
 
       updateTransform();
       
-      // Restore focus if there was one
       if (focusedNodeId && scenesDatabase[focusedNodeId]) {
         setTimeout(() => highlightConnections(focusedNodeId), 200);
       }
@@ -2864,7 +2841,7 @@
     console.log('🚀 Narrative Forge Pro loaded!');
     console.log('📖 Shortcuts: Ctrl+S=Save, Ctrl+Shift+A=Toggle Auto-save, L=Auto-layout, 0=Reset View, Esc=Clear Focus');
     console.log('🎯 Click any node to highlight its connections with colored glow effects!');
-    console.log('🎨 Theme system fixed - switch themes from the navbar!');
+    console.log('🖱️ Drag fix: Nodes now drag smoothly without flying away!');
   </script>
 </body>
 </html>
