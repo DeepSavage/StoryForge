@@ -1,4 +1,4 @@
-# 📖 Narrative Forge Pro
+# 📖 Narrative Tale Studios
 
 ### A Professional Visual Story Builder with Node-Based Story Mapping
 
