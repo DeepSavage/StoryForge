@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-  <title>✨ Narrative Forge Pro | Node-Based Story Builder</title>
+  <title>Tale Studios | Audio-Enabled Story Builder</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
@@ -49,6 +49,7 @@
       --glow-loop: rgba(251, 191, 36, 0.6);
       --glow-end: rgba(248, 113, 113, 0.6);
       --glow-parent: rgba(167, 139, 250, 0.6);
+      --glow-audio: rgba(236, 72, 153, 0.5);
       
       --bg-primary-rgb: 10, 15, 28;
       --accent-primary-rgb: 56, 189, 248;
@@ -57,7 +58,7 @@
     }
 
     /* ============================================================
-       THEMES (condensed for brevity - same as before)
+       THEMES
     ============================================================ */
     [data-theme="light"] {
       --bg-primary: #F1F5F9;
@@ -79,6 +80,7 @@
       --accent-secondary-rgb: 59, 130, 246;
       --accent-danger-rgb: 239, 68, 68;
       --accent-gradient: linear-gradient(135deg, #3B82F6, #2563EB);
+      --glow-audio: rgba(236, 72, 153, 0.4);
     }
 
     [data-theme="ocean"] {
@@ -100,6 +102,7 @@
       --accent-primary-rgb: 96, 165, 250;
       --accent-secondary-rgb: 59, 130, 246;
       --accent-danger-rgb: 248, 113, 113;
+      --glow-audio: rgba(236, 72, 153, 0.4);
     }
 
     [data-theme="forest"] {
@@ -121,6 +124,7 @@
       --accent-primary-rgb: 52, 211, 153;
       --accent-secondary-rgb: 16, 185, 129;
       --accent-danger-rgb: 248, 113, 113;
+      --glow-audio: rgba(236, 72, 153, 0.4);
     }
 
     [data-theme="sunset"] {
@@ -142,6 +146,7 @@
       --accent-primary-rgb: 248, 113, 113;
       --accent-secondary-rgb: 239, 68, 68;
       --accent-danger-rgb: 239, 68, 68;
+      --glow-audio: rgba(236, 72, 153, 0.4);
     }
 
     [data-theme="purple"] {
@@ -163,10 +168,11 @@
       --accent-primary-rgb: 167, 139, 250;
       --accent-secondary-rgb: 139, 92, 246;
       --accent-danger-rgb: 248, 113, 113;
+      --glow-audio: rgba(236, 72, 153, 0.4);
     }
 
     /* ============================================================
-       GLOBAL RESET & BASE STYLES (same as before)
+       GLOBAL RESET & BASE STYLES
     ============================================================ */
     * {
       margin: 0;
@@ -186,7 +192,7 @@
     }
 
     /* ============================================================
-       CURSOR EFFECT (same as before)
+       CURSOR EFFECT
     ============================================================ */
     #cursorTrail {
       position: fixed;
@@ -237,7 +243,7 @@
     }
 
     /* ============================================================
-       NAVBAR (same as before)
+       NAVBAR
     ============================================================ */
     .navbar {
       background: rgba(var(--bg-primary-rgb), 0.92);
@@ -327,6 +333,7 @@
     .legend-dot.loop { background: var(--conn-loop); }
     .legend-dot.end { background: var(--conn-end); }
     .legend-dot.parent { background: var(--conn-parent); }
+    .legend-dot.audio { background: #EC4899; }
 
     .theme-selector {
       position: relative;
@@ -954,6 +961,12 @@
       z-index: 5;
     }
 
+    .node-item.glow-audio {
+      border-color: #EC4899;
+      box-shadow: 0 0 30px var(--glow-audio), 0 0 60px var(--glow-audio);
+      z-index: 5;
+    }
+
     .node-item.glow-selected {
       border-color: var(--accent-primary);
       box-shadow: 0 0 40px var(--accent-primary), 0 0 80px var(--accent-primary);
@@ -1201,6 +1214,18 @@
       border-color: var(--accent-primary);
     }
 
+    /* Audio badge */
+    .node-item .audio-badge {
+      background: rgba(236, 72, 153, 0.2);
+      border: 1px solid #EC4899;
+      color: #EC4899;
+      font-size: 0.5rem;
+      padding: 1px 8px;
+      border-radius: 20px;
+      margin-top: 4px;
+      display: inline-block;
+    }
+
     /* ============================================================
        MAP CONTROLS
     ============================================================ */
@@ -1422,7 +1447,7 @@
   <nav class="navbar">
     <div class="navbar-brand">
       <div class="logo-icon"><i class="fas fa-code-branch"></i></div>
-      <h1>Narrative Forge</h1>
+      <h1>Tale Studios</h1>
       <span class="version">v3.0</span>
     </div>
 
@@ -1433,6 +1458,7 @@
         <span class="legend-item"><span class="legend-dot loop"></span> Loop</span>
         <span class="legend-item"><span class="legend-dot end"></span> End</span>
         <span class="legend-item"><span class="legend-dot parent"></span> Parent</span>
+        <span class="legend-item"><span class="legend-dot audio"></span> Audio</span>
       </div>
 
       <div class="theme-selector" id="themeSelector" onclick="toggleThemeDropdown()">
@@ -1521,6 +1547,7 @@
         </div>
       </div>
 
+      <!-- Scene ID -->
       <div class="form-group">
         <label class="form-label">
           <i class="fas fa-tag"></i> Scene ID <span class="required">*</span>
@@ -1528,16 +1555,19 @@
         <input type="text" id="sceneId" class="form-control" placeholder="e.g., start, forest" autocomplete="off">
       </div>
 
+      <!-- Speaker -->
       <div class="form-group">
         <label class="form-label"><i class="fas fa-user-astronaut"></i> Speaker</label>
         <input type="text" id="speaker" class="form-control" placeholder="Narrator, Hero...">
       </div>
 
+      <!-- Dialogue -->
       <div class="form-group">
         <label class="form-label"><i class="fas fa-comment-dots"></i> Dialogue <span class="required">*</span></label>
         <textarea id="dialogue" class="form-control" placeholder="Write the story text..."></textarea>
       </div>
 
+      <!-- Type & Timer -->
       <div class="form-row">
         <div class="form-group">
           <label class="form-label"><i class="fas fa-exchange-alt"></i> Interaction Type</label>
@@ -1552,7 +1582,7 @@
         </div>
       </div>
 
-      <!-- NEW: Transition Type Dropdown -->
+      <!-- Transition -->
       <div class="form-group">
         <label class="form-label"><i class="fas fa-exchange-alt"></i> Transition</label>
         <select id="transitionSelect" class="form-control">
@@ -1570,6 +1600,56 @@
         </div>
       </div>
 
+      <!-- Scene Audio Settings (Collapsible) -->
+      <div class="form-group">
+        <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;">
+          <label class="form-label" style="margin-bottom:0;"><i class="fas fa-music"></i> Scene Audio</label>
+          <button class="btn btn-secondary btn-xs" onclick="toggleSceneAudio()" type="button">
+            <i class="fas fa-chevron-down"></i> <span id="sceneAudioToggleLabel">Show</span>
+          </button>
+        </div>
+        <div id="sceneAudioPanel" style="display:none;" class="audio-settings">
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Action</label>
+              <select id="sceneAudioAction" class="form-control">
+                <option value="">None</option>
+                <option value="play">Play</option>
+                <option value="change">Change</option>
+                <option value="pause">Pause</option>
+                <option value="resume">Resume</option>
+                <option value="stop">Stop</option>
+                <option value="filter">Filter</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">BGM</label>
+              <input type="text" id="sceneAudioBgm" class="form-control" placeholder="bgm_file.mp3">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Fade (sec)</label>
+              <input type="number" id="sceneAudioFade" class="form-control" placeholder="1.5" step="0.5" min="0">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Filter</label>
+              <select id="sceneAudioFilter" class="form-control">
+                <option value="none">None</option>
+                <option value="lowpass">Lowpass</option>
+                <option value="highpass">Highpass</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Frequency (Hz)</label>
+              <input type="number" id="sceneAudioFreq" class="form-control" placeholder="800" step="100" min="0">
+            </div>
+          </div>
+        </div>
+        <div style="font-size:0.6rem; color:var(--text-muted); margin-top:4px;">
+          <i class="fas fa-info-circle"></i> Audio action when this scene becomes active.
+        </div>
+      </div>
+
+      <!-- Choices -->
       <div class="form-group">
         <label class="form-label"><i class="fas fa-list-ul"></i> Choices</label>
         <div id="choices" class="choices-container"></div>
@@ -1649,7 +1729,7 @@
 
   <script>
     // ============================================================
-    // CURSOR EFFECT (same as before)
+    // CURSOR EFFECT
     // ============================================================
     (function initCursor() {
       const trail = document.getElementById('cursorTrail');
@@ -1751,13 +1831,28 @@
     let updateTimeout = null;
 
     // ============================================================
-    // FOCUS & GLOW SYSTEM
+    // SCENE AUDIO TOGGLE
+    // ============================================================
+    function toggleSceneAudio() {
+      const panel = document.getElementById('sceneAudioPanel');
+      const label = document.getElementById('sceneAudioToggleLabel');
+      if (panel.style.display === 'none') {
+        panel.style.display = 'block';
+        label.textContent = 'Hide';
+      } else {
+        panel.style.display = 'none';
+        label.textContent = 'Show';
+      }
+    }
+
+    // ============================================================
+    // FOCUS & GLOW SYSTEM - FIXED
     // ============================================================
     function clearFocus() {
       focusedNodeId = null;
       
       document.querySelectorAll('.node-item').forEach(el => {
-        el.classList.remove('glow-continue', 'glow-choice', 'glow-loop', 'glow-end', 'glow-parent', 'glow-selected', 'faded');
+        el.classList.remove('glow-continue', 'glow-choice', 'glow-loop', 'glow-end', 'glow-parent', 'glow-audio', 'glow-selected', 'faded');
         const particles = el.querySelector('.node-particles');
         if (particles) particles.remove();
       });
@@ -1845,6 +1940,9 @@
       node.appendChild(container);
     }
 
+    // ============================================================
+    // FIXED highlightConnections - with proper parent/child detection
+    // ============================================================
     function highlightConnections(nodeId) {
       clearFocus();
       
@@ -1852,14 +1950,14 @@
       const scene = scenesDatabase[nodeId];
       if (!scene) return;
 
+      // Map: nodeId -> { type, direction }
       const connections = new Map();
       
-      // Outgoing
+      // ----- 1. Outgoing connections (children) -----
       if (scene.nextSceneId) {
         const type = getConnectionType(scene, scene.nextSceneId);
         connections.set(scene.nextSceneId, { type, direction: 'child' });
       }
-      
       if (scene.choices) {
         scene.choices.forEach(choice => {
           if (choice.nextSceneId) {
@@ -1869,60 +1967,85 @@
         });
       }
 
-      // Incoming (parents)
+      // ----- 2. Incoming connections (parents) -----
       Object.keys(scenesDatabase).forEach(otherId => {
         if (otherId === nodeId) return;
         const otherScene = scenesDatabase[otherId];
-        
-        if (otherScene.nextSceneId === nodeId) {
-          connections.set(otherId, { type: 'parent', direction: 'parent' });
-        }
-        
+        // Check if otherScene points to this node
+        let isParent = false;
+        if (otherScene.nextSceneId === nodeId) isParent = true;
         if (otherScene.choices) {
           otherScene.choices.forEach(choice => {
-            if (choice.nextSceneId === nodeId) {
-              connections.set(otherId, { type: 'parent', direction: 'parent' });
-            }
+            if (choice.nextSceneId === nodeId) isParent = true;
           });
+        }
+        if (isParent) {
+          // Only set if not already a child (priority to child type)
+          if (!connections.has(otherId)) {
+            connections.set(otherId, { type: 'parent', direction: 'parent' });
+          }
         }
       });
 
+      // ----- 3. Apply visual effects -----
       const allNodes = document.querySelectorAll('.node-item');
       
-      allNodes.forEach(el => {
-        el.classList.add('faded');
-      });
+      // First, fade all nodes
+      allNodes.forEach(el => el.classList.add('faded'));
 
+      // Then highlight connected nodes and the focused node
       allNodes.forEach(el => {
         const id = el.dataset.id;
         
         if (id === nodeId) {
+          // Focused node
           el.classList.remove('faded');
           el.classList.add('glow-selected');
           createParticles(el, 'continue');
+          
+          // Check if this scene has audio
+          if (scene.audio && scene.audio.action) {
+            el.classList.add('glow-audio');
+          }
           
           const connCount = connections.size;
           const parentCount = Array.from(connections.values()).filter(c => c.direction === 'parent').length;
           const childCount = Array.from(connections.values()).filter(c => c.direction === 'child').length;
           
           const statusText = document.getElementById('statusText');
-          let statusMsg = `🎯 <span class="highlight">${id}</span> → `;
-          if (parentCount > 0) statusMsg += `⬅️ ${parentCount} parent${parentCount > 1 ? 's' : ''} `;
-          if (childCount > 0) statusMsg += `➡️ ${childCount} child${childCount > 1 ? 'ren' : ''}`;
-          if (connCount === 0) statusMsg = `📌 <span class="highlight">${id}</span> has no connections`;
-          statusText.innerHTML = statusMsg;
+          let msg = `🎯 <span class="highlight">${id}</span> → `;
+          if (parentCount > 0) msg += `⬅️ ${parentCount} parent${parentCount>1?'s':''} `;
+          if (childCount > 0) msg += `➡️ ${childCount} child${childCount>1?'ren':''}`;
+          if (scene.audio && scene.audio.action) {
+            msg += `🔊 ${scene.audio.action}${scene.audio.bgm ? ' '+scene.audio.bgm : ''}`;
+          }
+          if (connCount === 0) msg = `📌 <span class="highlight">${id}</span> has no connections`;
+          statusText.innerHTML = msg;
           document.getElementById('statusBar').classList.add('visible');
           
         } else if (connections.has(id)) {
           const conn = connections.get(id);
-          const glowClass = getGlowClass(conn.type);
+          // Determine glow class based on direction and type
+          let glowClass;
+          if (conn.direction === 'parent') {
+            glowClass = 'glow-parent';
+          } else {
+            // child
+            glowClass = getGlowClass(conn.type);
+          }
           el.classList.remove('faded');
           el.classList.add(glowClass);
           createParticles(el, conn.type);
           
+          // Check if connected node has audio
+          const connectedScene = scenesDatabase[id];
+          if (connectedScene && connectedScene.audio && connectedScene.audio.action) {
+            el.classList.add('glow-audio');
+          }
+          
+          // Draw flow line
           const fromNode = document.querySelector(`.node-item[data-id="${nodeId}"]`);
           const toNode = el;
-          
           if (fromNode && toNode) {
             if (conn.direction === 'child') {
               createFlowLine(fromNode, toNode, conn.type, false);
@@ -1935,11 +2058,18 @@
 
       if (connections.size === 0) {
         const statusText = document.getElementById('statusText');
-        statusText.innerHTML = `📌 <span class="highlight">${nodeId}</span> has no connections`;
+        let msg = `📌 <span class="highlight">${nodeId}</span> has no connections`;
+        if (scene.audio && scene.audio.action) {
+          msg += ` 🔊 ${scene.audio.action}${scene.audio.bgm ? ' '+scene.audio.bgm : ''}`;
+        }
+        statusText.innerHTML = msg;
         document.getElementById('statusBar').classList.add('visible');
       }
     }
 
+    // ============================================================
+    // createFlowLine
+    // ============================================================
     function createFlowLine(fromNode, toNode, type, isParent = false) {
       if (!fromNode || !toNode) return;
       
@@ -2007,7 +2137,7 @@
     }
 
     // ============================================================
-    // NODE RENDERER
+    // NODE RENDERER - with audio badges and glow
     // ============================================================
     function getNodeType(scene) {
       if (!scene) return 'start';
@@ -2069,9 +2199,24 @@
         const preview = scene.dialogue ? scene.dialogue.slice(0, 60) + (scene.dialogue.length > 60 ? '...' : '') : 'No dialogue';
         const choiceCount = scene.choices ? scene.choices.length : 0;
         
-        // Show transition badge if present
-        const transitionBadge = scene.transition ? `<span class="node-badge">🔄 ${scene.transition}</span>` : '';
-        
+        // Build badges
+        let badges = '';
+        if (type !== 'end') {
+          badges += `<span class="node-badge">${type === 'choice' ? `🎲 ${choiceCount}` : '➡️ Continue'}</span>`;
+        }
+        if (scene.timerDuration) {
+          badges += `<span class="node-badge">⏱️ ${scene.timerDuration}s</span>`;
+        }
+        if (scene.transition && scene.transition !== 'fade') {
+          badges += `<span class="node-badge">🔄 ${scene.transition}</span>`;
+        }
+        // Scene audio
+        if (scene.audio && scene.audio.action) {
+          let audioLabel = `🔊 ${scene.audio.action}`;
+          if (scene.audio.bgm) audioLabel += ` ${scene.audio.bgm}`;
+          badges += `<span class="node-badge audio-badge">${audioLabel}</span>`;
+        }
+
         node.innerHTML = `
           <div class="node-header">
             <span class="node-dot ${type}"></span>
@@ -2079,15 +2224,18 @@
           </div>
           <div class="node-preview">${escapeHtml(preview)}</div>
           <div style="display:flex; gap:4px; margin-top:4px; flex-wrap:wrap;">
-            ${type !== 'end' ? `<span class="node-badge">${type === 'choice' ? `🎲 ${choiceCount}` : '➡️ Continue'}</span>` : ''}
-            ${scene.timerDuration ? `<span class="node-badge">⏱️ ${scene.timerDuration}s</span>` : ''}
-            ${transitionBadge}
+            ${badges}
           </div>
           <div class="node-actions">
             <button onclick="editSceneById('${escapeHtml(id)}')"><i class="fas fa-pen"></i></button>
             <button class="delete-btn" onclick="deleteSceneById('${escapeHtml(id)}')"><i class="fas fa-trash"></i></button>
           </div>
         `;
+
+        // If scene has audio, add a permanent subtle glow
+        if (scene.audio && scene.audio.action) {
+          node.classList.add('glow-audio');
+        }
 
         node.addEventListener('click', (e) => {
           if (e.target.closest('button')) return;
@@ -2330,6 +2478,14 @@
     const navChoiceCount = document.getElementById("navChoiceCount");
     const transitionSelect = document.getElementById("transitionSelect");
 
+    // Scene audio elements
+    const sceneAudioPanel = document.getElementById('sceneAudioPanel');
+    const sceneAudioAction = document.getElementById('sceneAudioAction');
+    const sceneAudioBgm = document.getElementById('sceneAudioBgm');
+    const sceneAudioFade = document.getElementById('sceneAudioFade');
+    const sceneAudioFilter = document.getElementById('sceneAudioFilter');
+    const sceneAudioFreq = document.getElementById('sceneAudioFreq');
+
     // ============================================================
     // AUTO-SAVE
     // ============================================================
@@ -2453,7 +2609,8 @@
         hasTapToContinue: true,
         nextSceneId: '',
         timerDuration: 0,
-        transition: 'fade'
+        transition: 'fade',
+        audio: null
       };
       renderAll();
       setTimeout(() => {
@@ -2465,11 +2622,40 @@
     };
 
     // ============================================================
-    // ADD CHOICE
+    // ADD CHOICE - WITH AUDIO
     // ============================================================
-    window.addChoiceField = function(choiceText = '', targetId = '') {
+    window.addChoiceField = function(choiceText = '', targetId = '', audioAction = '', audioBgm = '', audioFade = '', audioFilter = 'none', audioFreq = '') {
       const card = document.createElement('div');
       card.className = 'choice-card';
+      
+      // Build audio section
+      const audioHtml = `
+        <div style="margin-top:8px; padding:8px; background:var(--bg-secondary); border-radius:6px; border:1px solid var(--border-color);">
+          <div style="display:flex; align-items:center; gap:6px; margin-bottom:4px; font-size:0.65rem; color:var(--text-secondary);">
+            <i class="fas fa-volume-up"></i> <span>Audio Action</span>
+          </div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px;">
+            <select class="choice-audio-action form-control" style="grid-column:1/2;">
+              <option value="">None</option>
+              <option value="play" ${audioAction === 'play' ? 'selected' : ''}>Play</option>
+              <option value="change" ${audioAction === 'change' ? 'selected' : ''}>Change</option>
+              <option value="pause" ${audioAction === 'pause' ? 'selected' : ''}>Pause</option>
+              <option value="resume" ${audioAction === 'resume' ? 'selected' : ''}>Resume</option>
+              <option value="stop" ${audioAction === 'stop' ? 'selected' : ''}>Stop</option>
+              <option value="filter" ${audioAction === 'filter' ? 'selected' : ''}>Filter</option>
+            </select>
+            <input type="text" class="choice-audio-bgm form-control" placeholder="BGM file" value="${escapeHtml(audioBgm)}" style="grid-column:1/2;">
+            <input type="number" class="choice-audio-fade form-control" placeholder="Fade (sec)" value="${audioFade}" step="0.5" min="0" style="grid-column:1/2;">
+            <select class="choice-audio-filter form-control" style="grid-column:1/2;">
+              <option value="none" ${audioFilter === 'none' ? 'selected' : ''}>None</option>
+              <option value="lowpass" ${audioFilter === 'lowpass' ? 'selected' : ''}>Lowpass</option>
+              <option value="highpass" ${audioFilter === 'highpass' ? 'selected' : ''}>Highpass</option>
+            </select>
+            <input type="number" class="choice-audio-frequency form-control" placeholder="Frequency (Hz)" value="${audioFreq}" step="100" min="0" style="grid-column:1/2;">
+          </div>
+        </div>
+      `;
+
       card.innerHTML = `
         <div class="choice-row">
           <input type="text" class="form-control choice-text" placeholder="Choice text" value="${escapeHtml(choiceText)}">
@@ -2478,8 +2664,11 @@
         <div class="choice-actions">
           <button class="btn-icon create-target" onclick="quickCreateFromChoice(this)"><i class="fas fa-plus-circle"></i> Create target</button>
           <button class="btn-icon" onclick="removeChoiceItem(this)"><i class="fas fa-trash-alt"></i> Remove</button>
+          <button class="btn-icon" onclick="toggleAudioSettings(this)"><i class="fas fa-music"></i> Audio</button>
         </div>
+        <div class="choice-audio-settings" style="display:${audioAction ? 'block' : 'none'};">${audioHtml}</div>
       `;
+      
       choicesContainer.appendChild(card);
       
       const targetSelect = card.querySelector('.choice-target');
@@ -2498,7 +2687,16 @@
       cOpt.style.fontWeight = '600';
       targetSelect.appendChild(cOpt);
       if (targetId && sceneIds.includes(targetId)) targetSelect.value = targetId;
+      
       refreshAllDropdowns();
+    };
+
+    window.toggleAudioSettings = function(btn) {
+      const card = btn.closest('.choice-card');
+      const settings = card.querySelector('.choice-audio-settings');
+      if (settings) {
+        settings.style.display = settings.style.display === 'none' ? 'block' : 'none';
+      }
     };
 
     window.quickCreateFromChoice = function(btn) {
@@ -2521,7 +2719,8 @@
         hasTapToContinue: true,
         nextSceneId: '',
         timerDuration: 0,
-        transition: 'fade'
+        transition: 'fade',
+        audio: null
       };
       renderAll();
       setTimeout(() => {
@@ -2543,7 +2742,7 @@
     }
 
     // ============================================================
-    // SAVE SCENE - UPDATED with transition
+    // SAVE SCENE - WITH AUDIO
     // ============================================================
     window.saveSceneLogic = function(silent = false) {
       const id = sceneIdInput.value.trim();
@@ -2563,7 +2762,19 @@
       }
       const type = typeSelect.value;
       const timerVal = parseInt(timerInput.value) || 0;
-      const transition = transitionSelect.value; // NEW
+      const transition = transitionSelect.value;
+
+      // Scene audio
+      let audioObj = null;
+      if (sceneAudioAction.value) {
+        audioObj = { action: sceneAudioAction.value };
+        if (sceneAudioBgm.value) audioObj.bgm = sceneAudioBgm.value.trim();
+        if (sceneAudioFade.value) audioObj.fade = parseFloat(sceneAudioFade.value);
+        if (sceneAudioFilter.value && sceneAudioFilter.value !== 'none') {
+          audioObj.filter = sceneAudioFilter.value;
+          if (sceneAudioFreq.value) audioObj.frequency = parseInt(sceneAudioFreq.value);
+        }
+      }
 
       let sceneObj = { 
         id, 
@@ -2571,7 +2782,8 @@
         dialogue, 
         media: '', 
         mediaType: 'image',
-        transition: transition // NEW
+        transition: transition,
+        audio: audioObj
       };
       if (timerVal > 0) sceneObj.timerDuration = timerVal;
 
@@ -2595,7 +2807,8 @@
             hasTapToContinue: true,
             nextSceneId: '',
             timerDuration: 0,
-            transition: 'fade'
+            transition: 'fade',
+            audio: null
           };
           nextSceneVal = newId;
           renderAll();
@@ -2622,6 +2835,24 @@
           let text = textElem ? textElem.value.trim() : '';
           let nextId = targetElem ? targetElem.value : '';
 
+          // Audio values
+          const audioActionElem = card.querySelector('.choice-audio-action');
+          const audioBgmElem = card.querySelector('.choice-audio-bgm');
+          const audioFadeElem = card.querySelector('.choice-audio-fade');
+          const audioFilterElem = card.querySelector('.choice-audio-filter');
+          const audioFreqElem = card.querySelector('.choice-audio-frequency');
+
+          let audioObjChoice = null;
+          if (audioActionElem && audioActionElem.value) {
+            audioObjChoice = { action: audioActionElem.value };
+            if (audioBgmElem && audioBgmElem.value) audioObjChoice.bgm = audioBgmElem.value.trim();
+            if (audioFadeElem && audioFadeElem.value) audioObjChoice.fade = parseFloat(audioFadeElem.value);
+            if (audioFilterElem && audioFilterElem.value && audioFilterElem.value !== 'none') {
+              audioObjChoice.filter = audioFilterElem.value;
+              if (audioFreqElem && audioFreqElem.value) audioObjChoice.frequency = parseInt(audioFreqElem.value);
+            }
+          }
+
           if (nextId === '__CREATE_NEW__') {
             const newId = prompt('Enter ID:', 'scene_' + (Object.keys(scenesDatabase).length + 1));
             if (newId && newId.trim() && !/[^a-zA-Z0-9_\-]/.test(newId) && !scenesDatabase[newId]) {
@@ -2632,7 +2863,8 @@
                 hasTapToContinue: true,
                 nextSceneId: '',
                 timerDuration: 0,
-                transition: 'fade'
+                transition: 'fade',
+                audio: null
               };
               nextId = newId;
               renderAll();
@@ -2646,7 +2878,9 @@
           if (!text) { valid = false; if (!silent) showToast('⚠️ Choice text required', 'error'); }
           if (!nextId || nextId === '') { valid = false; if (!silent) showToast('⚠️ Choice target required', 'error'); }
           if (text && nextId && nextId !== '') {
-            choicesArray.push({ text, nextSceneId: nextId });
+            const choiceObj = { text, nextSceneId: nextId };
+            if (audioObjChoice) choiceObj.audio = audioObjChoice;
+            choicesArray.push(choiceObj);
           }
         });
         if (!valid) return false;
@@ -2697,7 +2931,7 @@
     }
 
     // ============================================================
-    // EDIT / DELETE - UPDATED with transition
+    // EDIT / DELETE - WITH AUDIO
     // ============================================================
     window.editSceneById = function(id) {
       const scene = scenesDatabase[id];
@@ -2707,13 +2941,39 @@
       dialogueInput.value = scene.dialogue || '';
       timerInput.value = scene.timerDuration || 0;
       
-      // Set transition
       transitionSelect.value = scene.transition || 'fade';
+
+      // Scene audio
+      const audio = scene.audio || {};
+      sceneAudioAction.value = audio.action || '';
+      sceneAudioBgm.value = audio.bgm || '';
+      sceneAudioFade.value = audio.fade !== undefined ? audio.fade : '';
+      sceneAudioFilter.value = audio.filter || 'none';
+      sceneAudioFreq.value = audio.frequency || '';
+      // Show panel if there's an action
+      if (audio.action) {
+        sceneAudioPanel.style.display = 'block';
+        document.getElementById('sceneAudioToggleLabel').textContent = 'Hide';
+      } else {
+        sceneAudioPanel.style.display = 'none';
+        document.getElementById('sceneAudioToggleLabel').textContent = 'Show';
+      }
       
       choicesContainer.innerHTML = '';
       if (scene.choices && scene.choices.length > 0) {
         typeSelect.value = 'choice';
-        scene.choices.forEach(ch => addChoiceField(ch.text, ch.nextSceneId));
+        scene.choices.forEach(ch => {
+          const audio = ch.audio || {};
+          addChoiceField(
+            ch.text, 
+            ch.nextSceneId, 
+            audio.action || '', 
+            audio.bgm || '', 
+            audio.fade !== undefined ? audio.fade : '', 
+            audio.filter || 'none', 
+            audio.frequency || ''
+          );
+        });
       } else {
         typeSelect.value = 'continue';
         setTimeout(() => {
@@ -2762,6 +3022,15 @@
       dialogueInput.value = '';
       timerInput.value = '0';
       transitionSelect.value = 'fade';
+      // Clear scene audio
+      sceneAudioAction.value = '';
+      sceneAudioBgm.value = '';
+      sceneAudioFade.value = '';
+      sceneAudioFilter.value = 'none';
+      sceneAudioFreq.value = '';
+      sceneAudioPanel.style.display = 'none';
+      document.getElementById('sceneAudioToggleLabel').textContent = 'Show';
+      
       choicesContainer.innerHTML = '';
       typeSelect.value = 'choice';
       toggleContinueField();
@@ -2840,56 +3109,84 @@
     });
 
     // ============================================================
-    // INIT DEMO - with transitions
+    // INIT DEMO - WITH AUDIO
     // ============================================================
     function initDemo() {
       if (Object.keys(scenesDatabase).length === 0) {
         scenesDatabase = {
           'start': { 
             id: 'start', 
-            speaker: 'Guide', 
-            dialogue: 'Welcome to Narrative Forge! Begin your adventure.', 
-            hasTapToContinue: true, 
-            nextSceneId: 'forest', 
-            timerDuration: 0,
-            transition: 'fade'
-          },
-          'forest': { 
-            id: 'forest', 
-            speaker: 'Narrator', 
-            dialogue: 'You enter the enchanted forest. Two paths ahead.', 
+            speaker: '???', 
+            dialogue: 'The final whistle blows...', 
+            timerDuration: 15,
+            transition: 'fade',
+            audio: { action: 'play', bgm: 'bgm_main.mp3', fade: 2 },
             choices: [
-              { text: 'Take the left path', nextSceneId: 'cave' }, 
-              { text: 'Go right to the village', nextSceneId: 'village' }
-            ],
-            transition: 'crossfade'
+              {
+                text: 'Walk away in silence',
+                nextSceneId: 'scene_silent_entry',
+                audio: { action: 'change', bgm: 'bgm_silent.mp3', fade: 2, filter: 'lowpass', frequency: 800 }
+              },
+              {
+                text: 'Confront the rival team',
+                nextSceneId: 'scene_confront_entry',
+                audio: { action: 'play', bgm: 'bgm_confront.mp3', fade: 1.5 }
+              },
+              {
+                text: 'Talk to my teammates',
+                nextSceneId: 'scene_teammates',
+                audio: { action: 'pause', fade: 1 }
+              },
+              {
+                text: 'Sit alone and think',
+                nextSceneId: 'scene_alone',
+                audio: { action: 'resume', fade: 1.5 }
+              }
+            ]
           },
-          'cave': { 
-            id: 'cave', 
-            speaker: 'Echo', 
-            dialogue: 'Dark cave. A mysterious glow...', 
-            hasTapToContinue: true, 
-            nextSceneId: 'treasure', 
-            timerDuration: 0,
-            transition: 'blur'
+          'scene_silent_entry': {
+            id: 'scene_silent_entry',
+            media: 'assets/f002.png',
+            mediaType: 'image',
+            speaker: 'Narrator',
+            dialogue: 'You walk away silently. The noise fades...',
+            hasTapToContinue: true,
+            nextSceneId: 'start',
+            transition: 'crossfade',
+            audio: { action: 'play', bgm: 'bgm_silent.mp3', fade: 1 }
           },
-          'village': { 
-            id: 'village', 
-            speaker: 'Elder', 
-            dialogue: 'Peaceful village. You rest.', 
-            hasTapToContinue: true, 
-            nextSceneId: 'start', 
-            timerDuration: 0,
-            transition: 'slideleft'
+          'scene_confront_entry': {
+            id: 'scene_confront_entry',
+            media: 'assets/f002.png',
+            mediaType: 'image',
+            speaker: 'Narrator',
+            dialogue: 'You walk toward the rival team. They notice you.',
+            hasTapToContinue: true,
+            nextSceneId: 'start',
+            transition: 'fade',
+            audio: { action: 'play', bgm: 'bgm_confront.mp3', fade: 1 }
           },
-          'treasure': { 
-            id: 'treasure', 
-            speaker: 'Narrator', 
-            dialogue: 'You found the treasure! The end.', 
-            hasTapToContinue: true, 
-            nextSceneId: 'start', 
-            timerDuration: 0,
-            transition: 'flash'
+          'scene_teammates': {
+            id: 'scene_teammates',
+            media: 'assets/f002.png',
+            mediaType: 'image',
+            speaker: 'Teammate',
+            dialogue: 'Hey, good game out there.',
+            hasTapToContinue: true,
+            nextSceneId: 'start',
+            transition: 'slideleft',
+            audio: null
+          },
+          'scene_alone': {
+            id: 'scene_alone',
+            media: 'assets/f002.png',
+            mediaType: 'image',
+            speaker: 'Memory',
+            dialogue: 'A memory flashes. You see yourself as a child.',
+            hasTapToContinue: true,
+            nextSceneId: 'start',
+            transition: 'blur',
+            audio: { action: 'resume', fade: 1.5 }
           }
         };
         renderAll();
@@ -2930,7 +3227,8 @@
     console.log('🚀 Narrative Forge Pro loaded!');
     console.log('📖 Shortcuts: Ctrl+S=Save, Ctrl+Shift+A=Toggle Auto-save, L=Auto-layout, 0=Reset View, Esc=Clear Focus');
     console.log('🎯 Click any node to see both parent (incoming) and child (outgoing) connections!');
-    console.log('🔄 Each scene now supports a transition type (fade, crossfade, flash, slideleft, slideright, zoom, zoomout, blur)');
+    console.log('🔄 Each scene supports transition and full audio settings (action, BGM, fade, filter, frequency).');
+    console.log('🎵 Choices also support audio actions. Audio-enabled nodes have a pink glow.');
   </script>
 </body>
 </html>
