@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-  <title>Tale Studios | Node-Based Story Builder</title>
+  <title>✨ Narrative Forge Pro | Node-Based Story Builder</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
@@ -237,7 +237,7 @@
     }
 
     /* ============================================================
-       NAVBAR (same as before - condensed)
+       NAVBAR (same as before)
     ============================================================ */
     .navbar {
       background: rgba(var(--bg-primary-rgb), 0.92);
@@ -532,7 +532,7 @@
     }
 
     /* ============================================================
-       LEFT PANEL (same as before - condensed)
+       LEFT PANEL
     ============================================================ */
     .editor-panel {
       width: 35%;
@@ -1089,7 +1089,6 @@
       to { stroke-dashoffset: -14; }
     }
 
-    /* ===== RECEIVER DOT ===== */
     .receiver-dot {
       position: absolute;
       border-radius: 50%;
@@ -1423,8 +1422,8 @@
   <nav class="navbar">
     <div class="navbar-brand">
       <div class="logo-icon"><i class="fas fa-code-branch"></i></div>
-      <h1>Tale Studios</h1>
-      <span class="version">v4.2</span>
+      <h1>Narrative Forge</h1>
+      <span class="version">v3.0</span>
     </div>
 
     <div class="navbar-actions">
@@ -1541,15 +1540,33 @@
 
       <div class="form-row">
         <div class="form-group">
-          <label class="form-label"><i class="fas fa-exchange-alt"></i> Type</label>
+          <label class="form-label"><i class="fas fa-exchange-alt"></i> Interaction Type</label>
           <select id="type" class="form-control">
             <option value="choice">🎲 Choices</option>
             <option value="continue">➡️ Continue</option>
           </select>
         </div>
         <div class="form-group">
-          <label class="form-label"><i class="fas fa-hourglass-half"></i> Timer</label>
+          <label class="form-label"><i class="fas fa-hourglass-half"></i> Timer (seconds)</label>
           <input type="number" id="timer" class="form-control" value="0" min="0" step="1">
+        </div>
+      </div>
+
+      <!-- NEW: Transition Type Dropdown -->
+      <div class="form-group">
+        <label class="form-label"><i class="fas fa-exchange-alt"></i> Transition</label>
+        <select id="transitionSelect" class="form-control">
+          <option value="fade">Fade (default)</option>
+          <option value="crossfade">Crossfade</option>
+          <option value="flash">Flash</option>
+          <option value="slideleft">Slide Left</option>
+          <option value="slideright">Slide Right</option>
+          <option value="zoom">Zoom In</option>
+          <option value="zoomout">Zoom Out</option>
+          <option value="blur">Blur</option>
+        </select>
+        <div style="font-size:0.6rem; color:var(--text-muted); margin-top:4px;">
+          <i class="fas fa-info-circle"></i> Visual transition effect when moving to this scene.
         </div>
       </div>
 
@@ -1715,7 +1732,7 @@
     });
 
     // ============================================================
-    // NODE MAP SYSTEM - FIXED
+    // NODE MAP SYSTEM
     // ============================================================
     let nodePositions = {};
     let zoomLevel = 1;
@@ -1734,7 +1751,7 @@
     let updateTimeout = null;
 
     // ============================================================
-    // FOCUS & GLOW SYSTEM - FIXED: Shows both parent and child connections
+    // FOCUS & GLOW SYSTEM
     // ============================================================
     function clearFocus() {
       focusedNodeId = null;
@@ -1835,10 +1852,9 @@
       const scene = scenesDatabase[nodeId];
       if (!scene) return;
 
-      // Find all connections (both incoming and outgoing)
-      const connections = new Map(); // nodeId -> {type: string, direction: 'parent'|'child'}
+      const connections = new Map();
       
-      // OUTGOING connections (children)
+      // Outgoing
       if (scene.nextSceneId) {
         const type = getConnectionType(scene, scene.nextSceneId);
         connections.set(scene.nextSceneId, { type, direction: 'child' });
@@ -1853,17 +1869,15 @@
         });
       }
 
-      // INCOMING connections (parents) - find all scenes that point to this node
+      // Incoming (parents)
       Object.keys(scenesDatabase).forEach(otherId => {
         if (otherId === nodeId) return;
         const otherScene = scenesDatabase[otherId];
         
-        // Check if other scene's nextSceneId points to this node
         if (otherScene.nextSceneId === nodeId) {
           connections.set(otherId, { type: 'parent', direction: 'parent' });
         }
         
-        // Check if any of other scene's choices point to this node
         if (otherScene.choices) {
           otherScene.choices.forEach(choice => {
             if (choice.nextSceneId === nodeId) {
@@ -1910,12 +1924,9 @@
           const toNode = el;
           
           if (fromNode && toNode) {
-            // Draw connection with direction
             if (conn.direction === 'child') {
-              // From focused node to child
               createFlowLine(fromNode, toNode, conn.type, false);
             } else {
-              // From parent to focused node (reverse direction)
               createFlowLine(toNode, fromNode, 'parent', true);
             }
           }
@@ -1981,7 +1992,6 @@
       line.appendChild(svg);
       container.appendChild(line);
       
-      // Receiver dot only for child connections
       if (!isParent) {
         const dot = document.createElement('div');
         dot.className = 'receiver-dot';
@@ -2059,6 +2069,9 @@
         const preview = scene.dialogue ? scene.dialogue.slice(0, 60) + (scene.dialogue.length > 60 ? '...' : '') : 'No dialogue';
         const choiceCount = scene.choices ? scene.choices.length : 0;
         
+        // Show transition badge if present
+        const transitionBadge = scene.transition ? `<span class="node-badge">🔄 ${scene.transition}</span>` : '';
+        
         node.innerHTML = `
           <div class="node-header">
             <span class="node-dot ${type}"></span>
@@ -2068,6 +2081,7 @@
           <div style="display:flex; gap:4px; margin-top:4px; flex-wrap:wrap;">
             ${type !== 'end' ? `<span class="node-badge">${type === 'choice' ? `🎲 ${choiceCount}` : '➡️ Continue'}</span>` : ''}
             ${scene.timerDuration ? `<span class="node-badge">⏱️ ${scene.timerDuration}s</span>` : ''}
+            ${transitionBadge}
           </div>
           <div class="node-actions">
             <button onclick="editSceneById('${escapeHtml(id)}')"><i class="fas fa-pen"></i></button>
@@ -2314,6 +2328,7 @@
     const exportBoxDiv = document.getElementById("exportBox");
     const navSceneCount = document.getElementById("navSceneCount");
     const navChoiceCount = document.getElementById("navChoiceCount");
+    const transitionSelect = document.getElementById("transitionSelect");
 
     // ============================================================
     // AUTO-SAVE
@@ -2437,7 +2452,8 @@
         dialogue: 'New scene created. Edit this.',
         hasTapToContinue: true,
         nextSceneId: '',
-        timerDuration: 0
+        timerDuration: 0,
+        transition: 'fade'
       };
       renderAll();
       setTimeout(() => {
@@ -2504,7 +2520,8 @@
         dialogue: 'New scene from choice.',
         hasTapToContinue: true,
         nextSceneId: '',
-        timerDuration: 0
+        timerDuration: 0,
+        transition: 'fade'
       };
       renderAll();
       setTimeout(() => {
@@ -2526,7 +2543,7 @@
     }
 
     // ============================================================
-    // SAVE SCENE
+    // SAVE SCENE - UPDATED with transition
     // ============================================================
     window.saveSceneLogic = function(silent = false) {
       const id = sceneIdInput.value.trim();
@@ -2546,8 +2563,16 @@
       }
       const type = typeSelect.value;
       const timerVal = parseInt(timerInput.value) || 0;
+      const transition = transitionSelect.value; // NEW
 
-      let sceneObj = { id, speaker, dialogue, media: '', mediaType: 'image' };
+      let sceneObj = { 
+        id, 
+        speaker, 
+        dialogue, 
+        media: '', 
+        mediaType: 'image',
+        transition: transition // NEW
+      };
       if (timerVal > 0) sceneObj.timerDuration = timerVal;
 
       if (type === 'continue') {
@@ -2569,7 +2594,8 @@
             dialogue: 'New scene created.',
             hasTapToContinue: true,
             nextSceneId: '',
-            timerDuration: 0
+            timerDuration: 0,
+            transition: 'fade'
           };
           nextSceneVal = newId;
           renderAll();
@@ -2605,7 +2631,8 @@
                 dialogue: 'New scene from choice.',
                 hasTapToContinue: true,
                 nextSceneId: '',
-                timerDuration: 0
+                timerDuration: 0,
+                transition: 'fade'
               };
               nextId = newId;
               renderAll();
@@ -2670,7 +2697,7 @@
     }
 
     // ============================================================
-    // EDIT / DELETE
+    // EDIT / DELETE - UPDATED with transition
     // ============================================================
     window.editSceneById = function(id) {
       const scene = scenesDatabase[id];
@@ -2679,6 +2706,10 @@
       speakerInput.value = scene.speaker || '';
       dialogueInput.value = scene.dialogue || '';
       timerInput.value = scene.timerDuration || 0;
+      
+      // Set transition
+      transitionSelect.value = scene.transition || 'fade';
+      
       choicesContainer.innerHTML = '';
       if (scene.choices && scene.choices.length > 0) {
         typeSelect.value = 'choice';
@@ -2730,6 +2761,7 @@
       speakerInput.value = '';
       dialogueInput.value = '';
       timerInput.value = '0';
+      transitionSelect.value = 'fade';
       choicesContainer.innerHTML = '';
       typeSelect.value = 'choice';
       toggleContinueField();
@@ -2808,16 +2840,57 @@
     });
 
     // ============================================================
-    // INIT DEMO
+    // INIT DEMO - with transitions
     // ============================================================
     function initDemo() {
       if (Object.keys(scenesDatabase).length === 0) {
         scenesDatabase = {
-          'start': { id: 'start', speaker: 'Guide', dialogue: 'Welcome to Narrative Forge! Begin your adventure.', hasTapToContinue: true, nextSceneId: 'forest', timerDuration: 0 },
-          'forest': { id: 'forest', speaker: 'Narrator', dialogue: 'You enter the enchanted forest. Two paths ahead.', choices: [{ text: 'Take the left path', nextSceneId: 'cave' }, { text: 'Go right to the village', nextSceneId: 'village' }] },
-          'cave': { id: 'cave', speaker: 'Echo', dialogue: 'Dark cave. A mysterious glow...', hasTapToContinue: true, nextSceneId: 'treasure', timerDuration: 0 },
-          'village': { id: 'village', speaker: 'Elder', dialogue: 'Peaceful village. You rest.', hasTapToContinue: true, nextSceneId: 'start', timerDuration: 0 },
-          'treasure': { id: 'treasure', speaker: 'Narrator', dialogue: 'You found the treasure! The end.', hasTapToContinue: true, nextSceneId: 'start', timerDuration: 0 }
+          'start': { 
+            id: 'start', 
+            speaker: 'Guide', 
+            dialogue: 'Welcome to Narrative Forge! Begin your adventure.', 
+            hasTapToContinue: true, 
+            nextSceneId: 'forest', 
+            timerDuration: 0,
+            transition: 'fade'
+          },
+          'forest': { 
+            id: 'forest', 
+            speaker: 'Narrator', 
+            dialogue: 'You enter the enchanted forest. Two paths ahead.', 
+            choices: [
+              { text: 'Take the left path', nextSceneId: 'cave' }, 
+              { text: 'Go right to the village', nextSceneId: 'village' }
+            ],
+            transition: 'crossfade'
+          },
+          'cave': { 
+            id: 'cave', 
+            speaker: 'Echo', 
+            dialogue: 'Dark cave. A mysterious glow...', 
+            hasTapToContinue: true, 
+            nextSceneId: 'treasure', 
+            timerDuration: 0,
+            transition: 'blur'
+          },
+          'village': { 
+            id: 'village', 
+            speaker: 'Elder', 
+            dialogue: 'Peaceful village. You rest.', 
+            hasTapToContinue: true, 
+            nextSceneId: 'start', 
+            timerDuration: 0,
+            transition: 'slideleft'
+          },
+          'treasure': { 
+            id: 'treasure', 
+            speaker: 'Narrator', 
+            dialogue: 'You found the treasure! The end.', 
+            hasTapToContinue: true, 
+            nextSceneId: 'start', 
+            timerDuration: 0,
+            transition: 'flash'
+          }
         };
         renderAll();
         setTimeout(autoLayoutNodes, 200);
@@ -2857,7 +2930,7 @@
     console.log('🚀 Narrative Forge Pro loaded!');
     console.log('📖 Shortcuts: Ctrl+S=Save, Ctrl+Shift+A=Toggle Auto-save, L=Auto-layout, 0=Reset View, Esc=Clear Focus');
     console.log('🎯 Click any node to see both parent (incoming) and child (outgoing) connections!');
-    console.log('💜 Purple dashed lines = parent connections (incoming)');
+    console.log('🔄 Each scene now supports a transition type (fade, crossfade, flash, slideleft, slideright, zoom, zoomout, blur)');
   </script>
 </body>
 </html>
